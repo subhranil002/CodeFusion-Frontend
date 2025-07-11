@@ -1,9 +1,17 @@
+import { io } from "socket.io-client";
+import CodePlayground from "./pages/CodePlayground";
+import { Route, Routes } from "react-router-dom";
+
 function App() {
+    const socket = io("http://localhost:3000");
+    socket.on("connect", () => {
+        console.log("Connected to server");
+    });
+
     return (
-        <div className="App">
-            <h1>Hello Vite!</h1>
-            <button className="btn btn-primary">Button</button>
-        </div>
+        <Routes>
+            <Route path="/:roomId" element={<CodePlayground />} />
+        </Routes>
     );
 }
 
