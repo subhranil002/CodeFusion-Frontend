@@ -1,7 +1,7 @@
 import { useState } from "react";
-import CodeEditor from "../components/CodeEditor";
-import Sidebar from "../components/Sidebar";
-import EditorHeader from "../components/EditorHeader";
+import CodeEditor from "../components/CodePlayground/CodeEditor";
+import Sidebar from "../components/CodePlayground/Sidebar";
+import EditorHeader from "../components/CodePlayground/EditorHeader";
 
 function CodePlayground() {
     const [value, setValue] = useState<string>("// Write code here...");

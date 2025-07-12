@@ -1,6 +1,7 @@
 // import { io } from "socket.io-client";
 import CodePlayground from "./pages/CodePlayground";
 import { Route, Routes } from "react-router-dom";
+import JoinRoom from "./pages/JoinRoom";
 
 function App() {
     // const socket = io("http://localhost:3000");
@@ -10,6 +11,7 @@ function App() {
 
     return (
         <Routes>
+            <Route path="/" element={<JoinRoom />} />
             <Route path="/:roomId" element={<CodePlayground />} />
         </Routes>
     );
