@@ -19,7 +19,7 @@ function CodeEditor({
 
     useEffect(() => {
         (async () => {
-            const res = await fetch("/Dracula.json");
+            const res = await fetch("/darkchai.json");
             const json = await res.json();
             setThemeJson(json);
         })();
@@ -30,20 +30,17 @@ function CodeEditor({
         monaco: typeof import("monaco-editor")
     ) {
         if (!themeJson) return;
-        monaco.editor.defineTheme("dracula", themeJson);
-        monaco.editor.setTheme("dracula");
+        monaco.editor.defineTheme("darkchai", themeJson);
+        monaco.editor.setTheme("darkchai");
     }
-
-    console.log(language);
-    
 
     return (
         themeJson && (
             <Editor
                 height="100%"
                 width="100%"
-                defaultLanguage={language}
-                defaultValue={value ?? "// Write code here..."}
+                language={language}
+                defaultValue={value}
                 onMount={handleEditorTheme}
                 onChange={debounce(handleChange, 500)}
                 options={{
@@ -53,6 +50,9 @@ function CodeEditor({
                     formatOnType: true,
                     formatOnPaste: true,
                     automaticLayout: true,
+                    minimap: {
+                        enabled: false,
+                    },
                     ...options,
                 }}
             />
