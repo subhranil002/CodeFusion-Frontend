@@ -1,20 +1,7 @@
-// import { io } from "socket.io-client";
-import CodePlayground from "./pages/CodePlayground";
-import { Route, Routes } from "react-router-dom";
-import JoinRoom from "./pages/JoinRoom";
+import Router from "./router/Router";
 
 function App() {
-    // const socket = io("http://localhost:3000");
-    // socket.on("connect", () => {
-    //     console.log("Connected to server");
-    // });
-
-    return (
-        <Routes>
-            <Route path="/" element={<JoinRoom />} />
-            <Route path="/:roomId" element={<CodePlayground />} />
-        </Routes>
-    );
+    return <Router />;
 }
 
 export default App;
