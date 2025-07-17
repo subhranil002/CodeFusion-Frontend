@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
     FaUser,
@@ -8,6 +8,16 @@ import {
     FaRandom,
     FaUsers,
 } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { setUsers } from "../redux/slices/EditorSlice";
+import { useDispatch } from "react-redux";
+import editorSocket from "../configs/EditorSocketConfig";
+import toast from "react-hot-toast";
+
+type User = {
+    name: string;
+    isTyping: boolean;
+};
 
 interface FormData {
     userName: string;
@@ -28,9 +38,10 @@ function JoinRoom() {
         },
         mode: "onChange",
     });
-
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
     const roomId = watch("roomId");
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const handleInputChange = (index: number, value: string) => {
         if (/^[a-zA-Z0-9]$/.test(value) || value === "") {
@@ -73,8 +84,48 @@ function JoinRoom() {
     };
 
     const onSubmit = (data: FormData) => {
-        console.log("Joining room:", data.roomId.join(""), "as", data.userName);
+        editorSocket.emit("verifyUniqueUser", {
+            roomId: data.roomId.join(""),
+            userName: data.userName,
+        });
     };
+
+    useEffect(() => {
+        editorSocket.on(
+            "uniqueUser",
+            (data: { roomId: string; userName: string; unique: boolean }) => {
+                if (data.unique) {
+                    editorSocket.emit("join", {
+                        roomId: data.roomId,
+                        userName: data.userName,
+                    });
+                    dispatch(
+                        setUsers([
+                            {
+                                name: data.userName,
+                                isTyping: false,
+                            },
+                        ])
+                    );
+                    navigate("/playground", {
+                        state: {
+                            roomId: data.roomId,
+                        },
+                    });
+                } else {
+                    toast.error("Username already taken!");
+                }
+            }
+        );
+        editorSocket.on("updateUsers", ({users}: {users: User[]}) => {
+            dispatch(setUsers(users));
+        });
+
+        return () => {
+            editorSocket.off("uniqueUser");
+            editorSocket.off("updateUsers");
+        };
+    }, []);
 
     return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-primary to-secondary">
