@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     FaChevronDown,
     FaCode,
@@ -7,33 +7,26 @@ import {
     FaSignOutAlt,
     FaUser,
 } from "react-icons/fa";
-import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import editorSocket from "../../configs/EditorSocketConfig";
+import { useNavigate } from "react-router-dom";
+import { setUsers } from "../../redux/slices/EditorSlice";
 
-function Sidebar({ children }: { children: React.ReactNode }) {
+type User = {
+    name: string;
+    isTyping: boolean;
+};
+
+type SidebarPropsType = {
+    roomId: string;
+    children: React.ReactNode;
+};
+
+function Sidebar({ roomId, children }: SidebarPropsType) {
     const [copySuccess, setCopySuccess] = useState<string>("");
-    const { roomId } = useParams<{ roomId: string }>();
-    const users = [
-        {
-            name: "Alex Johnson",
-            avatar: "https://img.daisyui.com/images/profile/demo/batperson@192.webp",
-            isTyping: true,
-        },
-        {
-            name: "Taylor Swift",
-            avatar: "https://img.daisyui.com/images/profile/demo/batperson@192.webp",
-            isTyping: false,
-        },
-        {
-            name: "Jamie Smith",
-            avatar: "https://img.daisyui.com/images/profile/demo/batperson@192.webp",
-            isTyping: false,
-        },
-        {
-            name: "John Doe",
-            avatar: "https://img.daisyui.com/images/profile/demo/batperson@192.webp",
-            isTyping: true,
-        },
-    ];
+    const users = useSelector((state: any) => state.editor.users);
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const copyToClipboard = () => {
         if (!roomId) return;
@@ -42,10 +35,25 @@ function Sidebar({ children }: { children: React.ReactNode }) {
         setTimeout(() => setCopySuccess(""), 2000);
     };
 
-    const typingUsers = users.filter((user) => user.isTyping);
+    const typingUsers = users.filter((user: User) => user.isTyping);
+
+    function leaveRoom() {
+        editorSocket.emit("leaveRoom", {});
+        navigate("/");
+    }
+
+    useEffect(() => {
+        editorSocket.on("updateUsers", ({ users }: { users: User[] }) => {
+            dispatch(setUsers(users));
+        });
+
+        return () => {
+            editorSocket.off("updateUsers");
+        };
+    }, []);
 
     return (
-        <div className="md:fixed drawer md:drawer-open">
+        <div className="drawer md:drawer-open">
             <input id="code-drawer" type="checkbox" className="drawer-toggle" />
             <div className="drawer-content">
                 <label
@@ -57,7 +65,7 @@ function Sidebar({ children }: { children: React.ReactNode }) {
                 </label>
                 {children}
             </div>
-            <div className="drawer-side bg-base-100 h-full w-80 p-5 flex flex-col shadow-xl">
+            <div className="drawer-side bg-base-100 h-screen w-80 p-5 flex flex-col shadow-xl">
                 <label
                     htmlFor="code-drawer"
                     aria-label="close sidebar"
@@ -91,7 +99,7 @@ function Sidebar({ children }: { children: React.ReactNode }) {
                 </div>
 
                 {/* Users Section */}
-                <div className="mb-6">
+                <div className="mb-6 w-full">
                     <h3 className="flex items-center gap-2 text-lg font-semibold mb-3">
                         <FaUser className="text-primary" />
                         <span>Active Users ({users.length})</span>
@@ -102,16 +110,18 @@ function Sidebar({ children }: { children: React.ReactNode }) {
                             <input type="checkbox" className="peer" />
                             <div className="collapse-title p-3 flex items-center justify-between">
                                 <div className="avatar-group -space-x-4">
-                                    {users.slice(0, 5).map((user, index) => (
-                                        <div className="avatar" key={index}>
-                                            <div className="w-10 rounded-full ring-2 ring-base-100">
-                                                <img
-                                                    src={user.avatar}
-                                                    alt={user.name}
-                                                />
+                                    {users
+                                        .slice(0, 5)
+                                        .map((user: User, index: number) => (
+                                            <div className="avatar" key={index}>
+                                                <div className="w-10 rounded-full ring-2 ring-base-100">
+                                                    <img
+                                                        src="https://img.freepik.com/free-vector/hacker-operating-laptop-cartoon-icon-illustration-technology-icon-concept-isolated-flat-cartoon-style_138676-2387.jpg?semt=ais_hybrid&w=740"
+                                                        alt={user.name}
+                                                    />
+                                                </div>
                                             </div>
-                                        </div>
-                                    ))}
+                                        ))}
                                     {users.length > 5 && (
                                         <div className="avatar">
                                             <div className="w-10 rounded-full ring-2 ring-base-100">
@@ -124,29 +134,31 @@ function Sidebar({ children }: { children: React.ReactNode }) {
                             </div>
                             <div className="collapse-content">
                                 <ul className="pt-2 space-y-2">
-                                    {users.slice(0, 5).map((user, index) => (
-                                        <li
-                                            key={index}
-                                            className="flex items-center gap-3 bg-base-100 px-4 py-3 rounded-lg"
-                                        >
-                                            <div className="avatar">
-                                                <div className="w-8 rounded-full">
-                                                    <img
-                                                        src={user.avatar}
-                                                        alt={user.name}
-                                                    />
+                                    {users
+                                        .slice(0, 5)
+                                        .map((user: User, index: number) => (
+                                            <li
+                                                key={index}
+                                                className="flex items-center gap-3 bg-base-100 px-4 py-3 rounded-lg"
+                                            >
+                                                <div className="avatar">
+                                                    <div className="w-8 rounded-full">
+                                                        <img
+                                                            src="https://img.freepik.com/free-vector/hacker-operating-laptop-cartoon-icon-illustration-technology-icon-concept-isolated-flat-cartoon-style_138676-2387.jpg?semt=ais_hybrid&w=740"
+                                                            alt={user.name}
+                                                        />
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <span className="truncate font-medium">
-                                                {user.name}
-                                            </span>
-                                            {user.isTyping && (
-                                                <span className="badge badge-info badge-xs ml-auto">
-                                                    typing
+                                                <span className="truncate font-medium">
+                                                    {user.name}
                                                 </span>
-                                            )}
-                                        </li>
-                                    ))}
+                                                {user.isTyping && (
+                                                    <span className="badge badge-info badge-xs ml-auto">
+                                                        typing
+                                                    </span>
+                                                )}
+                                            </li>
+                                        ))}
                                 </ul>
                             </div>
                         </div>
@@ -161,7 +173,7 @@ function Sidebar({ children }: { children: React.ReactNode }) {
                             {typingUsers.length > 1
                                 ? `${typingUsers
                                       .slice(0, -1)
-                                      .map((u) => u.name.split(" ")[0])
+                                      .map((u: User) => u.name.split(" ")[0])
                                       .join(", ")} 
                                             and ${
                                                 typingUsers[
@@ -175,11 +187,11 @@ function Sidebar({ children }: { children: React.ReactNode }) {
                     </div>
                 )}
 
-                {/* Spacer */}
-                <div className="flex-1"></div>
-
                 {/* Leave Button */}
-                <button className="btn btn-error w-full mt-4 gap-2">
+                <button
+                    className="btn btn-error w-[85%] gap-2 absolute bottom-5"
+                    onClick={() => leaveRoom()}
+                >
                     <FaSignOutAlt />
                     Leave Room
                 </button>

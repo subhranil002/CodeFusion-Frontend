@@ -1,21 +1,65 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CodeEditor from "../components/CodePlayground/CodeEditor";
 import Sidebar from "../components/CodePlayground/Sidebar";
 import EditorHeader from "../components/CodePlayground/EditorHeader";
+import editorSocket from "../configs/EditorSocketConfig";
+import { setUsers, setLanguage } from "../redux/slices/EditorSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+
+type User = {
+    name: string;
+    isTyping: boolean;
+};
 
 function CodePlayground() {
-    const [value, setValue] = useState<string>("// Write code here...");
-    const [language, setLanguage] = useState<string>("javascript");
     const [writeLock, setWriteLock] = useState(false);
-    const [fontSize, setFontSize] = useState<number>(18);
+    const [fontSize, setFontSize] = useState(18);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { users, language } = useSelector((state: any) => state.editor);
+    const location = useLocation();
+    const roomId = location.state?.roomId;
+    
 
-    const handleChange = (e: string | undefined) => {
-        if (!e) return;
-        setValue(e);
+    useEffect(() => {
+        if (!roomId || users.length === 0) navigate("/");
+    }, [users, roomId, navigate]);
+
+    useEffect(() => {
+        editorSocket.on(
+            "userJoined",
+            ({ userName, users }: { userName: string; users: User[] }) => {
+                dispatch(setUsers(users));
+                toast.success(`${userName} joined the room!`);
+            }
+        );
+        editorSocket.on(
+            "userLeft",
+            ({ userName, users }: { userName: string; users: User[] }) => {
+                dispatch(setUsers(users));
+                toast.success(`${userName} left the room!`);
+            }
+        );
+        editorSocket.on("languageUpdate", (newLang: string) =>
+            dispatch(setLanguage(newLang))
+        );
+
+        return () => {
+            editorSocket.off("userJoined");
+            editorSocket.off("userLeft");
+            editorSocket.off("languageUpdate");
+        };
+    }, []);
+
+    const onLanguageChange = (newLang: string) => {
+        dispatch(setLanguage(newLang));
+        editorSocket.emit("languageChange", { language: newLang });
     };
 
     return (
-        <Sidebar>
+        <Sidebar roomId={roomId}>
             <div className="min-h-screen bg-base-200">
                 {/* Main Content */}
                 <div className="drawer-content flex flex-col h-screen">
@@ -25,7 +69,7 @@ function CodePlayground() {
                             {/* Editor Header */}
                             <EditorHeader
                                 language={language}
-                                setLanguage={setLanguage}
+                                setLanguage={onLanguageChange}
                                 writeLock={writeLock}
                                 setWriteLock={setWriteLock}
                                 fontSize={fontSize}
@@ -35,8 +79,6 @@ function CodePlayground() {
                             <div className="flex-1">
                                 <CodeEditor
                                     language={language}
-                                    value={value}
-                                    handleChange={handleChange}
                                     options={{
                                         fontSize: fontSize,
                                         readOnly: writeLock,
