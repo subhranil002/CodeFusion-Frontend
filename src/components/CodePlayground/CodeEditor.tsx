@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Editor from "@monaco-editor/react";
+import type * as monacoEditor from "monaco-editor"; 
 import debounce from "debounce";
 import { useDispatch, useSelector } from "react-redux";
 import editorSocket from "../../configs/EditorSocketConfig";
@@ -26,7 +27,7 @@ function CodeEditor({ language, options }: CodeEditorProps) {
     }, []);
 
     function handleEditorTheme(
-        editor: any,
+        _editor: monacoEditor.editor.IStandaloneCodeEditor,
         monaco: typeof import("monaco-editor")
     ) {
         if (!themeJson) return;
