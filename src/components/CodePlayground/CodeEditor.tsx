@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import Editor from "@monaco-editor/react";
-import type * as monacoEditor from "monaco-editor"; 
+import { useEffect, useMemo, useRef } from "react";
+import Editor, { type BeforeMount } from "@monaco-editor/react";
+import blackboard from "monaco-themes/themes/Blackboard.json";
 import debounce from "debounce";
 import { useDispatch, useSelector } from "react-redux";
 import editorSocket from "../../configs/EditorSocketConfig";
@@ -12,28 +12,14 @@ type CodeEditorProps = {
 };
 
 function CodeEditor({ language, options }: CodeEditorProps) {
-    const [themeJson, setThemeJson] = useState(null);
     const { code } = useSelector((state: any) => state.editor);
     const dispatch = useDispatch();
     const isTyping = useRef(false);
     const timeout = useRef<number | null>(null);
 
-    useEffect(() => {
-        (async () => {
-            const res = await fetch("/darkchai.json");
-            const json = await res.json();
-            setThemeJson(json);
-        })();
-    }, []);
-
-    function handleEditorTheme(
-        _editor: monacoEditor.editor.IStandaloneCodeEditor,
-        monaco: typeof import("monaco-editor")
-    ) {
-        if (!themeJson) return;
-        monaco.editor.defineTheme("darkchai", themeJson);
-        monaco.editor.setTheme("darkchai");
-    }
+    const handleMount: BeforeMount = (monaco) => {
+        monaco.editor.defineTheme("blackboard", blackboard as any);
+    };
 
     useEffect(() => {
         editorSocket.on("codeUpdate", (newCode: string) => {
@@ -70,32 +56,31 @@ function CodeEditor({ language, options }: CodeEditorProps) {
     );
 
     return (
-        themeJson && (
-            <Editor
-                height="100%"
-                width="100%"
-                language={language}
-                value={code}
-                onMount={handleEditorTheme}
-                onChange={(value) => {
-                    handleTyping();
-                    dispatch(setCode(value ?? ""));
-                    debouncedChange(value);
-                }}
-                options={{
-                    wordWrap: "on",
-                    fontFamily: "monospace",
-                    quickSuggestions: true,
-                    formatOnType: true,
-                    formatOnPaste: true,
-                    automaticLayout: true,
-                    minimap: {
-                        enabled: false,
-                    },
-                    ...options,
-                }}
-            />
-        )
+        <Editor
+            height="100%"
+            width="100%"
+            language={language}
+            value={code}
+            theme="blackboard"
+            beforeMount={handleMount}
+            onChange={(value) => {
+                handleTyping();
+                dispatch(setCode(value ?? ""));
+                debouncedChange(value);
+            }}
+            options={{
+                wordWrap: "on",
+                fontFamily: "monospace",
+                quickSuggestions: true,
+                formatOnType: true,
+                formatOnPaste: true,
+                automaticLayout: true,
+                minimap: {
+                    enabled: false,
+                },
+                ...options,
+            }}
+        />
     );
 }
 
