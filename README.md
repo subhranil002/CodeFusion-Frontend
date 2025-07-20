@@ -1,69 +1,83 @@
-# React + TypeScript + Vite
+# CodeFusion Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A collaborative, real-time code editor web application built with React, TypeScript, Vite, Redux Toolkit, Socket.IO, Tailwind CSS, and DaisyUI. CodeFusion enables multiple users to join a room and edit code together, with live updates, language switching, and user presence indicators.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Real-time collaborative code editing** powered by Socket.IO
+- **Room-based sessions**: Join or create a room with a unique ID
+- **Live user presence**: See who is in the room and who is typing
+- **Language selection**: Switch between JavaScript, Python, and Java
+- **Write lock**: Toggle between editable and read-only modes
+- **Font size adjustment** for the code editor
+- **Copy room ID** to clipboard for easy sharing
+- **Responsive, modern UI** with Tailwind CSS and DaisyUI
+- **Toasts and feedback** for user actions
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
+- [Vite](https://vitejs.dev/) for fast development
+- [Redux Toolkit](https://redux-toolkit.js.org/) for state management
+- [Socket.IO Client](https://socket.io/) for real-time communication
+- [Monaco Editor](https://microsoft.github.io/monaco-editor/) for code editing
+- [Tailwind CSS](https://tailwindcss.com/) + [DaisyUI](https://daisyui.com/) for styling
+- [React Hook Form](https://react-hook-form.com/) for forms
+- [React Router v7](https://reactrouter.com/)
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Getting Started
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+### Prerequisites
+- Node.js (v18+ recommended)
+- A running backend server that exposes a Socket.IO endpoint for `/editor` (see `VITE_BACKEND_URL`)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/subhranil002/CodeFusion-Frontend.git
+   cd CodeFusion-Frontend
+   ```
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+3. **Set environment variables:**
+   - Create a `.env` file in the root directory.
+   - Add your backend URL:
+     ```env
+     VITE_BACKEND_URL=http://localhost:5000
+     ```
+
+### Running the App
+
+- **Development mode:**
+  ```bash
+  npm run dev
+  ```
+  The app will be available at [http://localhost:5173](http://localhost:5173) by default.
+
+- **Production build:**
+  ```bash
+  npm run build
+  npm run preview
+  ```
+
+### Linting
+```bash
+npm run lint
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Project Structure
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+src/
+  components/CodePlayground/   # Editor, Sidebar, Header UI
+  configs/                     # Socket.IO config
+  pages/                       # JoinRoom, CodePlayground pages
+  redux/                       # Redux store and slices
+  router/                      # React Router setup
+  index.css                    # Tailwind & DaisyUI imports
+  App.tsx, main.tsx            # App entry points
+```
+
