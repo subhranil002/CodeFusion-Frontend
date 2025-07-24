@@ -13,16 +13,7 @@ import { setUsers } from "../redux/slices/EditorSlice";
 import { useDispatch } from "react-redux";
 import editorSocket from "../configs/EditorSocketConfig";
 import toast from "react-hot-toast";
-
-type User = {
-    name: string;
-    isTyping: boolean;
-};
-
-interface FormData {
-    userName: string;
-    roomId: string[];
-}
+import type { User, FormData } from "../types/types";
 
 function JoinRoom() {
     const {
@@ -117,7 +108,7 @@ function JoinRoom() {
                 }
             }
         );
-        editorSocket.on("updateUsers", ({users}: {users: User[]}) => {
+        editorSocket.on("updateUsers", ({ users }: { users: User[] }) => {
             dispatch(setUsers(users));
         });
 

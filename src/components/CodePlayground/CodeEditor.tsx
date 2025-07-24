@@ -6,16 +6,12 @@ import { useDispatch, useSelector } from "react-redux";
 import editorSocket from "../../configs/EditorSocketConfig";
 import { setCode } from "../../redux/slices/EditorSlice";
 
-type CodeEditorProps = {
-    language: string;
-    options?: any;
-};
-
-function CodeEditor({ language, options }: CodeEditorProps) {
+function CodeEditor({ options }: any) {
     const { code } = useSelector((state: any) => state.editor);
     const dispatch = useDispatch();
     const isTyping = useRef(false);
     const timeout = useRef<number | null>(null);
+    const { currentLanguage } = useSelector((state: any) => state.editor);
 
     const handleMount: BeforeMount = (monaco) => {
         monaco.editor.defineTheme("blackboard", blackboard as any);
@@ -59,7 +55,7 @@ function CodeEditor({ language, options }: CodeEditorProps) {
         <Editor
             height="100%"
             width="100%"
-            language={language}
+            language={currentLanguage?.name.toLowerCase()}
             value={code}
             theme="blackboard"
             beforeMount={handleMount}

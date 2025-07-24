@@ -11,16 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import editorSocket from "../../configs/EditorSocketConfig";
 import { useNavigate } from "react-router-dom";
 import { setUsers } from "../../redux/slices/EditorSlice";
-
-type User = {
-    name: string;
-    isTyping: boolean;
-};
-
-type SidebarPropsType = {
-    roomId: string;
-    children: React.ReactNode;
-};
+import type { User, SidebarPropsType } from "../../types/types";
 
 function Sidebar({ roomId, children }: SidebarPropsType) {
     const [copySuccess, setCopySuccess] = useState<string>("");
