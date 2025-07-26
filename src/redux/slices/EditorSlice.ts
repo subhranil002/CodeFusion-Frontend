@@ -11,7 +11,7 @@ import type {
 } from "../../types/types";
 import getLanguages from "../../apis/CodePlayground/getLanguages";
 import codeRunner from "../../apis/CodePlayground/codeRunner";
-// import editorSocket from "../../configs/EditorSocketConfig";
+import editorSocket from "../../configs/EditorSocketConfig";
 
 const initialState: InitialState = {
     users: [],
@@ -60,7 +60,7 @@ const editorSlice = createSlice({
             })
             .addCase(executeCode.fulfilled, (state, action) => {
                 state.terminalData = action.payload.data;
-                // editorSocket.emit("updateTerminal", action.payload.data);
+                editorSocket.emit("updateTerminal", action.payload.data);
             });
     },
 });
