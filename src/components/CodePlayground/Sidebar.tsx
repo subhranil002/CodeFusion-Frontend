@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
     FaChevronDown,
     FaCode,
@@ -7,17 +7,17 @@ import {
     FaSignOutAlt,
     FaUser,
 } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import editorSocket from "../../configs/EditorSocketConfig";
 import { useNavigate } from "react-router-dom";
-import { setUsers } from "../../redux/slices/EditorSlice";
 import type { User, SidebarPropsType } from "../../types/types";
 
 function Sidebar({ roomId, children }: SidebarPropsType) {
     const [copySuccess, setCopySuccess] = useState<string>("");
-    const users = useSelector((state: any) => state.editor.users);
+    const { users } = useSelector(
+        (state: any) => state.editor
+    );
     const navigate = useNavigate();
-    const dispatch = useDispatch();
 
     const copyToClipboard = () => {
         if (!roomId) return;
@@ -32,16 +32,6 @@ function Sidebar({ roomId, children }: SidebarPropsType) {
         editorSocket.emit("leaveRoom", {});
         navigate("/");
     }
-
-    useEffect(() => {
-        editorSocket.on("updateUsers", ({ users }: { users: User[] }) => {
-            dispatch(setUsers(users));
-        });
-
-        return () => {
-            editorSocket.off("updateUsers");
-        };
-    }, []);
 
     return (
         <div className="drawer md:drawer-open">
