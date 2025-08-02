@@ -51,7 +51,7 @@ function SignUp() {
                             <div className="form-control mx-auto my-auto flex flex-col mb-4">
                                 <div className="flex flex-col justify-center">
                                     <div className="flex justify-center">
-                                        <label className="label w-24 rounded-full bg-base-200 relative group">
+                                        <label className="label w-24 h-24 rounded-full bg-base-200 relative group">
                                             {selectedFile?.type?.startsWith(
                                                 "image/"
                                             ) ? (
