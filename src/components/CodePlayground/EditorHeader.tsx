@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import {
     FaCheck,
     FaChevronDown,
@@ -7,11 +9,10 @@ import {
     FaTimes,
 } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import type { Language, User } from "../../types/types";
-import { useEffect, useState } from "react";
+
 import { executeCode } from "../../redux/slices/EditorSlice";
+import type { Language, User } from "../../types/types";
 import UserInput from "./UserInput";
-import toast from "react-hot-toast";
 
 function EditorHeader({
     setLanguage,

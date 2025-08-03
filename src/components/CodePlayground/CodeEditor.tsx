@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useRef } from "react";
 import Editor, { type BeforeMount } from "@monaco-editor/react";
-import blackboard from "monaco-themes/themes/Blackboard.json";
 import debounce from "debounce";
+import blackboard from "monaco-themes/themes/Blackboard.json";
+import { useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+
 import editorSocket from "../../configs/EditorSocketConfig";
 import { setCode } from "../../redux/slices/EditorSlice";
 

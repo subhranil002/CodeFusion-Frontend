@@ -8,9 +8,10 @@ import {
     FaUser,
 } from "react-icons/fa";
 import { useSelector } from "react-redux";
-import editorSocket from "../../configs/EditorSocketConfig";
 import { useNavigate } from "react-router-dom";
-import type { User, SidebarPropsType } from "../../types/types";
+
+import editorSocket from "../../configs/EditorSocketConfig";
+import type { SidebarPropsType,User } from "../../types/types";
 
 function Sidebar({ roomId, children }: SidebarPropsType) {
     const [copySuccess, setCopySuccess] = useState<string>("");

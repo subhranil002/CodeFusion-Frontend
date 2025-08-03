@@ -1,19 +1,20 @@
 import { useEffect, useRef } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { Controller,useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import {
-    FaUser,
-    FaKey,
     FaArrowRight,
+    FaKey,
     FaPaste,
     FaRandom,
+    FaUser,
     FaUsers,
 } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-import { setUsers } from "../redux/slices/EditorSlice";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 import editorSocket from "../configs/EditorSocketConfig";
-import toast from "react-hot-toast";
-import type { User, FormData } from "../types/types";
+import { setUsers } from "../redux/slices/EditorSlice";
+import type { FormData,User } from "../types/types";
 
 function JoinRoom() {
     const {

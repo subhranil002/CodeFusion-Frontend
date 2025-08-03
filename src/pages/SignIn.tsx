@@ -1,8 +1,8 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { LuLogIn } from "react-icons/lu";
 import { Link } from "react-router-dom";
-import { useForm } from "react-hook-form";
 
 type FormData = {
     email: string;

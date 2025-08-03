@@ -1,18 +1,19 @@
 import { useEffect, useState } from "react";
-import CodeEditor from "../components/CodePlayground/CodeEditor";
-import Sidebar from "../components/CodePlayground/Sidebar";
-import EditorHeader from "../components/CodePlayground/EditorHeader";
-import editorSocket from "../configs/EditorSocketConfig";
-import {
-    setUsers,
-    setLanguage,
-    fetchLanguages,
-} from "../redux/slices/EditorSlice";
+import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
-import type { Language, User } from "../types/types";
+
+import CodeEditor from "../components/CodePlayground/CodeEditor";
+import EditorHeader from "../components/CodePlayground/EditorHeader";
+import Sidebar from "../components/CodePlayground/Sidebar";
 import Terminal from "../components/CodePlayground/Terminal";
+import editorSocket from "../configs/EditorSocketConfig";
+import {
+    fetchLanguages,
+    setLanguage,
+    setUsers,
+} from "../redux/slices/EditorSlice";
+import type { Language, User } from "../types/types";
 
 function CodePlayground() {
     const [writeLock, setWriteLock] = useState(false);

@@ -1,11 +1,12 @@
 import { Route, Routes } from "react-router-dom";
-import JoinRoom from "../pages/JoinRoom";
+
+import RequireAuth from "../components/Auth/RequireAuth";
 import CodePlayground from "../pages/CodePlayground";
-import NotFound from "../pages/NotFound";
 import Home from "../pages/Home";
+import JoinRoom from "../pages/JoinRoom";
+import NotFound from "../pages/NotFound";
 import SignIn from "../pages/SignIn";
 import SignUp from "../pages/SignUp";
-import RequireAuth from "../components/Auth/RequireAuth";
 // import Dashboard from "../pages/Dashboard";
 
 function Router() {

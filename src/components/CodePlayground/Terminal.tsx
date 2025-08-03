@@ -1,7 +1,8 @@
 import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 import editorSocket from "../../configs/EditorSocketConfig";
 import { setTerminalData } from "../../redux/slices/EditorSlice";
-import { useDispatch, useSelector } from "react-redux";
 
 function Terminal() {
     const dispatch = useDispatch();

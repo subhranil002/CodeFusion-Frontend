@@ -3,15 +3,16 @@ import {
     createSlice,
     type PayloadAction,
 } from "@reduxjs/toolkit";
+
+import codeRunner from "../../apis/CodePlayground/codeRunner";
+import getLanguages from "../../apis/CodePlayground/getLanguages";
+import editorSocket from "../../configs/EditorSocketConfig";
 import type {
-    User,
-    TerminalData,
     InitialState,
     Language,
+    TerminalData,
+    User,
 } from "../../types/types";
-import getLanguages from "../../apis/CodePlayground/getLanguages";
-import codeRunner from "../../apis/CodePlayground/codeRunner";
-import editorSocket from "../../configs/EditorSocketConfig";
 
 const initialState: InitialState = {
     users: [],
