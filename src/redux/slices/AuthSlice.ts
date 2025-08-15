@@ -1,8 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import toast from "react-hot-toast";
 
+import guestSignIn from "../../apis/user/guestSignIn";
+import logoutUser from "../../apis/user/logoutUser";
 import signIn from "../../apis/user/signIn";
 import signUp from "../../apis/user/signUp";
+import getCurrentUser from "../../apis/user/getCurrentUser";
 
 const authStorage = {
     get: <T>(key: string, defaultValue: T): T => {
@@ -94,6 +97,30 @@ export const login = createAsyncThunk(
     }
 );
 
+export const guestLogin = createAsyncThunk("auth/guestLogin", async () => {
+    try {
+        return await guestSignIn();
+    } catch (error) {
+        handleError(error);
+    }
+});
+
+export const logout = createAsyncThunk("auth/logout", async () => {
+    try {
+        return await logoutUser();
+    } catch (error) {
+        handleError(error);
+    }
+});
+
+export const getProfile = createAsyncThunk("auth/getProfile", async () => {
+    try {
+        return await getCurrentUser();
+    } catch (error) {
+        handleError(error);
+    }
+});
+
 const authSlice = createSlice({
     name: "auth",
     initialState,
@@ -110,6 +137,28 @@ const authSlice = createSlice({
             })
             .addCase(login.fulfilled, (state, action) => {
                 state.isLoggedIn = action.payload?.success;
+                state.role = action.payload?.data?.role;
+                state.data = action.payload?.data;
+                authStorage.set("isLoggedIn", action.payload?.success);
+                authStorage.set("role", action.payload?.data?.role);
+                authStorage.set("data", action.payload?.data);
+            })
+            .addCase(guestLogin.fulfilled, (state, action) => {
+                state.isLoggedIn = action.payload?.success;
+                state.role = action.payload?.data?.role;
+                state.data = action.payload?.data;
+                authStorage.set("isLoggedIn", action.payload?.success);
+                authStorage.set("role", action.payload?.data?.role);
+                authStorage.set("data", action.payload?.data);
+            })
+            .addCase(logout.fulfilled, (state) => {
+                state.isLoggedIn = false;
+                state.role = "VISITOR";
+                state.data = {};
+                authStorage.clear();
+            })
+            .addCase(getProfile.fulfilled, (state, action) => {
+                state.isLoggedIn = true;
                 state.role = action.payload?.data?.role;
                 state.data = action.payload?.data;
                 authStorage.set("isLoggedIn", action.payload?.success);
