@@ -12,14 +12,14 @@ import SignUp from "../pages/SignUp";
 function Router() {
     return (
         <Routes>
-            <Route path="/" element={<JoinRoom />} />
+            <Route path="/" element={<Home />} />
             <Route path="/signin" element={<SignIn />} />
-            <Route path="/home" element={<Home />} />
             <Route path="/signup" element={<SignUp />} />
             <Route element={<RequireAuth />}>
                 {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+                <Route path="/join" element={<JoinRoom />} />
                 <Route path="/playground" element={<CodePlayground />} />
-            </Route> 
+            </Route>
             <Route path="*" element={<NotFound />} />
         </Routes>
     );

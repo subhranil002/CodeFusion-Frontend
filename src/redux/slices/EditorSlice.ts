@@ -4,8 +4,8 @@ import {
     type PayloadAction,
 } from "@reduxjs/toolkit";
 
-import codeRunner from "../../apis/CodePlayground/codeRunner";
-import getLanguages from "../../apis/CodePlayground/getLanguages";
+import codeRunner from "../../apis/editor/codeRunner";
+import getLanguages from "../../apis/editor/getLanguages";
 import editorSocket from "../../configs/EditorSocketConfig";
 import type {
     InitialState,

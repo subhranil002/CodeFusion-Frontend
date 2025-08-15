@@ -3,7 +3,10 @@ import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { FiImage, FiUser } from "react-icons/fi";
 import { LuLogIn } from "react-icons/lu";
-import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+
+import { register } from "../redux/slices/AuthSlice";
 
 type FormData = {
     file: FileList;
@@ -16,17 +19,21 @@ function SignUp() {
     const [showPassword, setShowPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const {
-        register,
+        register: registerInput,
         handleSubmit,
         watch,
         formState: { errors },
     } = useForm<FormData>();
+    const dispatch: any = useDispatch();
+    const navigate = useNavigate();
     const selectedFile = watch("file")?.[0];
 
     const onSubmit = async (data: FormData) => {
         setIsSubmitting(true);
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        console.log(data);
+        const res = await dispatch(register(data));
+        if (res?.payload?.success) {
+            navigate("/");
+        }
         setIsSubmitting(false);
     };
 
@@ -72,7 +79,7 @@ function SignUp() {
                                                 type="file"
                                                 className="hidden"
                                                 accept=".jpg, .jpeg, .png, .svg"
-                                                {...register("file", {
+                                                {...registerInput("file", {
                                                     required:
                                                         "Profile picture is required",
                                                 })}
@@ -100,7 +107,7 @@ function SignUp() {
                                         type="text"
                                         placeholder="Enter your name"
                                         className="input input-bordered w-full"
-                                        {...register("fullName", {
+                                        {...registerInput("fullName", {
                                             required: "Full name is required",
                                         })}
                                     />
@@ -124,7 +131,7 @@ function SignUp() {
                                     className={`input input-bordered w-full ${
                                         errors.email ? "input-error" : ""
                                     }`}
-                                    {...register("email", {
+                                    {...registerInput("email", {
                                         required: "Email is required",
                                         pattern: {
                                             value: /^(?=.{1,254}$)(?=.{1,64}@)[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/,
@@ -160,7 +167,7 @@ function SignUp() {
                                         className={`input input-bordered w-full pr-12 ${
                                             errors.password ? "input-error" : ""
                                         }`}
-                                        {...register("password", {
+                                        {...registerInput("password", {
                                             required: "Password is required",
                                             minLength: {
                                                 value: 8,

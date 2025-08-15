@@ -2,7 +2,10 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { LuLogIn } from "react-icons/lu";
-import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+
+import { guestLogin, login } from "../redux/slices/AuthSlice";
 
 type FormData = {
     email: string;
@@ -17,18 +20,24 @@ function SignIn() {
         handleSubmit,
         formState: { errors },
     } = useForm<FormData>();
+    const dispatch: any = useDispatch();
+    const navigate = useNavigate();
 
     const onSubmit = async (data: FormData) => {
         setIsSubmitting(true);
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        console.log(data);
+        const res = await dispatch(login(data));
+        if (res?.payload?.success) {
+            navigate("/");
+        }
         setIsSubmitting(false);
     };
 
     const handleGuest = async () => {
         setIsSubmitting(true);
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        console.log("Guest Login");
+        const res = await dispatch(guestLogin());
+        if (res?.payload?.success) {
+            navigate("/");
+        }
         setIsSubmitting(false);
     };
 

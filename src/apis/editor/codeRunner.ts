@@ -14,7 +14,9 @@ export default async function codeRunner(
     });
     toast.promise(res, {
         loading: "Running code...",
-        success: "Code executed successfully!",
+        success: (data) => {
+            return data?.data?.message;
+        },
         error: "Failed to run code!",
     });
 

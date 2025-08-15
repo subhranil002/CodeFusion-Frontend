@@ -18,6 +18,7 @@ export default tseslint.config([
             "simple-import-sort/exports": "warn",
             "sort-imports": "off",
             "import/order": "off",
+            "@typescript-eslint/no-explicit-any": "off",
         },
         extends: [
             js.configs.recommended,
