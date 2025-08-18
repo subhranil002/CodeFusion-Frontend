@@ -1,11 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import toast from "react-hot-toast";
 
+import getCurrentUser from "../../apis/user/getCurrentUser";
 import guestSignIn from "../../apis/user/guestSignIn";
 import logoutUser from "../../apis/user/logoutUser";
 import signIn from "../../apis/user/signIn";
 import signUp from "../../apis/user/signUp";
-import getCurrentUser from "../../apis/user/getCurrentUser";
 
 const authStorage = {
     get: <T>(key: string, defaultValue: T): T => {

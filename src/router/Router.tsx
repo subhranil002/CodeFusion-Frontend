@@ -2,12 +2,14 @@ import { Route, Routes } from "react-router-dom";
 
 import RequireAuth from "../components/Auth/RequireAuth";
 import CodePlayground from "../pages/CodePlayground";
+import ContactUs from "../pages/Contact";
+import Dashboard from "../pages/Dashboard";
 import Home from "../pages/Home";
 import JoinRoom from "../pages/JoinRoom";
 import NotFound from "../pages/NotFound";
+import Profile from "../pages/Profile";
 import SignIn from "../pages/SignIn";
 import SignUp from "../pages/SignUp";
-// import Dashboard from "../pages/Dashboard";
 
 function Router() {
     return (
@@ -15,10 +17,12 @@ function Router() {
             <Route path="/" element={<Home />} />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
+            <Route path="/contact" element={<ContactUs />} />
             <Route element={<RequireAuth />}>
-                {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/join" element={<JoinRoom />} />
                 <Route path="/playground" element={<CodePlayground />} />
+                <Route path="/profile" element={<Profile />} />
             </Route>
             <Route path="*" element={<NotFound />} />
         </Routes>
