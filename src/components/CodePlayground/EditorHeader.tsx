@@ -10,7 +10,7 @@ import {
 } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 
-import { executeCode } from "../../redux/slices/EditorSlice";
+import { executeCode } from "../../redux/slices/RoomSlice";
 import type { Language, User } from "../../types/types";
 import UserInput from "./UserInput";
 

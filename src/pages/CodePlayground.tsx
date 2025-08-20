@@ -12,7 +12,7 @@ import {
     fetchLanguages,
     setLanguage,
     setUsers,
-} from "../redux/slices/EditorSlice";
+} from "../redux/slices/RoomSlice";
 import type { Language, User } from "../types/types";
 
 function CodePlayground() {

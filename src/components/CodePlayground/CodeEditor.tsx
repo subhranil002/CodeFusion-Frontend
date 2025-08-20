@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import editorSocket from "../../configs/EditorSocketConfig";
-import { setCode } from "../../redux/slices/EditorSlice";
+import { setCode } from "../../redux/slices/RoomSlice";
 
 function CodeEditor({ options }: any) {
     const { code } = useSelector((state: any) => state.editor);

@@ -13,7 +13,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import editorSocket from "../configs/EditorSocketConfig";
-import { setUsers } from "../redux/slices/EditorSlice";
+import { setUsers } from "../redux/slices/RoomSlice";
 import type { FormData,User } from "../types/types";
 
 function JoinRoom() {

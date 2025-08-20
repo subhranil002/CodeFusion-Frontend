@@ -7,7 +7,7 @@ export default async function codeRunner(
     langId: number,
     stdIn?: string
 ) {
-    const res = axiosInstance.post("/editor/run", {
+    const res = axiosInstance.post("/rooms/run", {
         code,
         langId,
         stdIn,
