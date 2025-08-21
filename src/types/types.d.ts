@@ -8,14 +8,6 @@ export type Language = {
     name: string;
 }
 
-export type InitialState = {
-    users: User[];
-    code: string;
-    currentLanguage: Language | null;
-    languageList: Language[];
-    terminalData: TerminalData | null;
-};
-
 export type FormData = {
     userName: string;
     roomId: string[];
