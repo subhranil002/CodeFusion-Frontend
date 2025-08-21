@@ -11,18 +11,17 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 
 import { executeCode } from "../../redux/slices/RoomSlice";
-import type { Language, User } from "../../types/types";
+import type { User } from "../../types/types";
 import UserInput from "./UserInput";
 
 function EditorHeader({
-    setLanguage,
     writeLock,
     setWriteLock,
     fontSize,
     setFontSize,
 }: any) {
-    const { users, currentLanguage, languageList, code } = useSelector(
-        (state: any) => state.editor
+    const { users, languageId, languageName, code } = useSelector(
+        (state: any) => state.room
     );
     const [userInput, setUserInput] = useState(false);
     const [runCode, setRunCode] = useState(false);
@@ -45,7 +44,7 @@ function EditorHeader({
         const res = dispatch(
             executeCode({
                 code: code,
-                langId: currentLanguage?.id,
+                langId: languageId,
                 stdIn: userInputValue,
             })
         );
@@ -66,36 +65,13 @@ function EditorHeader({
                 {/* Left Section */}
                 <div className="flex flex-wrap items-center gap-3">
                     {/* Language Selector */}
-                    <div className="dropdown dropdown-start">
                         <div
                             tabIndex={0}
                             role="button"
                             className="btn btn-sm btn-outline rounded-tl-xl flex items-center gap-2 h-8"
                         >
-                            <span>{currentLanguage?.name.toUpperCase()}</span>
-                            <FaChevronDown className="text-xs" />
+                            <span>{languageName.toUpperCase()}</span>
                         </div>
-                        <ul
-                            tabIndex={0}
-                            className="dropdown-content z-1 menu p-2 shadow bg-base-100 rounded-box mt-1"
-                        >
-                            {languageList &&
-                                languageList.length > 0 &&
-                                languageList?.map((lang: Language) => (
-                                    <li key={lang.id}>
-                                        <a
-                                            onClick={() => {
-                                                setLanguage(lang);
-                                                // @ts-expect-error hehe
-                                                document.activeElement?.blur();
-                                            }}
-                                        >
-                                            {lang.name.toUpperCase()}
-                                        </a>
-                                    </li>
-                                ))}
-                        </ul>
-                    </div>
 
                     {/* Font Size Controls */}
                     <div className="dropdown dropdown-center">

@@ -43,8 +43,7 @@ function Header() {
                                 <FaUser className="ml-2" />
                             </button>
                         </Link>
-                        {/* <Link to="/dashboard"> */}
-                        <Link to="/join">
+                        <Link to="/dashboard">
                             <button className="btn btn-primary group">
                                 Dashboard
                                 <FaArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />

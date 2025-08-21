@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FaArrowRight, FaPlus } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const LANGUAGES: { value: string; label: string }[] = [
     { value: "javascript", label: "JavaScript" },
@@ -17,6 +18,8 @@ const LANGUAGES: { value: string; label: string }[] = [
 function RoomActions() {
     const [selectedLanguage, setSelectedLanguage] =
         useState<string>("javascript");
+
+    const navigate = useNavigate();
 
     return (
         <div className="grid md:grid-cols-2 gap-6 mb-8">
@@ -54,7 +57,10 @@ function RoomActions() {
                             </select>
                         </div>
 
-                        <button className="btn btn-lg w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90">
+                        <button
+                            className="btn btn-lg w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
+                            onClick={() => navigate("/playground")}
+                        >
                             <FaPlus className="w-4 h-4 mr-2" />
                             Create Room
                         </button>
@@ -89,7 +95,10 @@ function RoomActions() {
                             />
                         </div>
 
-                        <button className="w-full btn btn-outline btn-lg">
+                        <button
+                            className="w-full btn btn-outline btn-lg"
+                            onClick={() => navigate("/playground")}
+                        >
                             <FaArrowRight className="w-4 h-4 mr-2" />
                             Join Room
                         </button>

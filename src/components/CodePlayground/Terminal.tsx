@@ -6,7 +6,7 @@ import { setTerminalData } from "../../redux/slices/RoomSlice";
 
 function Terminal() {
     const dispatch = useDispatch();
-    const { terminalData } = useSelector((state: any) => state.editor);
+    const { terminalData } = useSelector((state: any) => state.room);
 
     useEffect(() => {
         editorSocket.on("updateTerminal", (data: any) => {

@@ -11,13 +11,11 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import editorSocket from "../../configs/EditorSocketConfig";
-import type { SidebarPropsType,User } from "../../types/types";
+import type { User } from "../../types/types";
 
-function Sidebar({ roomId, children }: SidebarPropsType) {
+function Sidebar({ children }: any) {
     const [copySuccess, setCopySuccess] = useState<string>("");
-    const { users } = useSelector(
-        (state: any) => state.editor
-    );
+    const { users, roomId } = useSelector((state: any) => state.room);
     const navigate = useNavigate();
 
     const copyToClipboard = () => {
@@ -33,6 +31,9 @@ function Sidebar({ roomId, children }: SidebarPropsType) {
         editorSocket.emit("leaveRoom", {});
         navigate("/");
     }
+
+    console.log(users);
+    
 
     return (
         <div className="drawer md:drawer-open">

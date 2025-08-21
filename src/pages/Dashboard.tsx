@@ -1,6 +1,5 @@
 import DashboardHeader from "../components/Dashboard/DashboardHeader";
 import RoomActions from "../components/Dashboard/RoomActions";
-import RoomFilters from "../components/Dashboard/RoomFilters";
 import RoomList from "../components/Dashboard/RoomList";
 
 function Dashboard() {
@@ -13,11 +12,6 @@ function Dashboard() {
                     {/* Room Actions */}
                     <section>
                         <RoomActions />
-                    </section>
-
-                    {/* Filters */}
-                    <section>
-                        <RoomFilters />
                     </section>
 
                     {/* Room List */}

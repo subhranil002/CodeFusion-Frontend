@@ -10,22 +10,20 @@ import Terminal from "../components/CodePlayground/Terminal";
 import editorSocket from "../configs/EditorSocketConfig";
 import {
     fetchLanguages,
-    setLanguage,
     setUsers,
 } from "../redux/slices/RoomSlice";
-import type { Language, User } from "../types/types";
+import type { User } from "../types/types";
 
 function CodePlayground() {
     const [writeLock, setWriteLock] = useState(false);
     const [fontSize, setFontSize] = useState(18);
     const dispatch = useDispatch<any>();
     const navigate = useNavigate();
-    const { users } = useSelector((state: any) => state.editor);
+    const { users } = useSelector((state: any) => state.room);
     const location = useLocation();
     const roomId = location.state?.roomId;
 
     useEffect(() => {
-        if (!roomId || users.length === 0) navigate("/");
         (async () => {
             await dispatch(fetchLanguages());
         })();
@@ -46,9 +44,6 @@ function CodePlayground() {
                 toast.success(`${userName} left the room!`);
             }
         );
-        editorSocket.on("languageUpdate", (newLang: Language) =>
-            dispatch(setLanguage(newLang))
-        );
 
         return () => {
             editorSocket.off("userJoined");
@@ -57,13 +52,8 @@ function CodePlayground() {
         };
     }, []);
 
-    const onLanguageChange = (newLang: Language) => {
-        dispatch(setLanguage(newLang));
-        editorSocket.emit("languageChange", { language: newLang });
-    };
-
     return (
-        <Sidebar roomId={roomId}>
+        <Sidebar>
             <div className="min-h-screen bg-base-200">
                 {/* Main Content */}
                 <div className="drawer-content flex flex-col h-screen">
@@ -72,7 +62,6 @@ function CodePlayground() {
                         <div className="bg-base-100 rounded-xl shadow-lg overflow-hidden flex flex-col h-full md:max-h-[95vh]">
                             {/* Editor Header */}
                             <EditorHeader
-                                setLanguage={onLanguageChange}
                                 writeLock={writeLock}
                                 setWriteLock={setWriteLock}
                                 fontSize={fontSize}
