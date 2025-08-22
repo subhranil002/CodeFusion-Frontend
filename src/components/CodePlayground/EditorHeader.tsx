@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import { useState } from "react";
 import {
     FaCheck,
     FaChevronDown,
@@ -11,16 +10,14 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 
 import { executeCode } from "../../redux/slices/RoomSlice";
-import type { User } from "../../types/types";
 import UserInput from "./UserInput";
 
 function EditorHeader({
     writeLock,
-    setWriteLock,
     fontSize,
     setFontSize,
 }: any) {
-    const { users, languageId, languageName, code } = useSelector(
+    const { languageId, languageName, code } = useSelector(
         (state: any) => state.room
     );
     const [userInput, setUserInput] = useState(false);
@@ -28,18 +25,7 @@ function EditorHeader({
     const [userInputValue, setUserInputValue] = useState("");
     const dispatch: any = useDispatch();
 
-    useEffect(() => {
-        setWriteLock(false);
-        if (users.some((user: User) => user.isTyping)) {
-            setWriteLock(true);
-        }
-    }, [users, setWriteLock]);
-
     const handleCodeRun = () => {
-        if (code.length > 5 && code.trim() === "// Write code here...") {
-            toast.error("Please write valid code!");
-            return;
-        }
         setRunCode(true);
         const res = dispatch(
             executeCode({

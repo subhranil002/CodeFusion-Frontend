@@ -21,7 +21,10 @@ function Router() {
             <Route element={<RequireAuth />}>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/join" element={<JoinRoom />} />
-                <Route path="/playground" element={<CodePlayground />} />
+                <Route
+                    path="/playground/:roomId"
+                    element={<CodePlayground />}
+                />
                 <Route path="/profile" element={<Profile />} />
             </Route>
             <Route path="*" element={<NotFound />} />

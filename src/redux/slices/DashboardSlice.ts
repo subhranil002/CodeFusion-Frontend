@@ -1,14 +1,37 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
+import getLanguages from "../../apis/room/getLanguages";
 import getRoomsByUser from "../../apis/user/getRoomsByUser";
 
+export type Language = {
+    id: number;
+    name: string;
+};
+
+export type RoomCardData = {
+    roomId: string;
+    roomName: string;
+    languageName: string;
+    owner: string;
+    public: boolean;
+};
+
 export type RoomSliceInitialState = {
-    rooms: [];
+    languageList: Language[];
+    rooms: RoomCardData[];
 };
 
 const initialState: RoomSliceInitialState = {
+    languageList: [],
     rooms: [],
 };
+
+export const fetchLanguages = createAsyncThunk(
+    "editor/getLanguages",
+    async () => {
+        return await getLanguages();
+    }
+);
 
 export const fetchRooms = createAsyncThunk("dashboard/fetchRooms", async () => {
     return await getRoomsByUser();
@@ -19,9 +42,13 @@ const dashboardSlice = createSlice({
     initialState,
     reducers: {},
     extraReducers: (builder) => {
-        builder.addCase(fetchRooms.fulfilled, (state, action) => {
-            state.rooms = action.payload.data.rooms;
-        });
+        builder
+            .addCase(fetchLanguages.fulfilled, (state, action) => {
+                state.languageList = action.payload.data;
+            })
+            .addCase(fetchRooms.fulfilled, (state, action) => {
+                state.rooms = action.payload.data.rooms;
+            });
     },
 });
 

@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 import codeRunner from "../../apis/room/codeRunner";
 import createRoom from "../../apis/room/createRoom";
-import getLanguages from "../../apis/room/getLanguages";
 import getRoom from "../../apis/room/getRoom";
 import updateRoom from "../../apis/room/updateRoom";
 import editorSocket from "../../configs/EditorSocketConfig";
@@ -30,7 +29,7 @@ const roomStorage = {
         sessionStorage.removeItem("code");
         sessionStorage.removeItem("terminalData");
         sessionStorage.removeItem("users");
-        // sessionStorage.removeItem("public");
+        sessionStorage.removeItem("public");
     },
 };
 
@@ -43,7 +42,7 @@ export type RoomSliceInitialState = {
     code: string;
     terminalData: TerminalData | null;
     users: User[];
-    // public: boolean;
+    public: boolean;
 };
 
 const initialState: RoomSliceInitialState = {
@@ -55,19 +54,12 @@ const initialState: RoomSliceInitialState = {
     code: roomStorage.get<string>("code", "print('Hello, World!')"),
     terminalData: roomStorage.get<TerminalData | null>("terminalData", null),
     users: roomStorage.get<User[]>("users", []),
-    // public: roomStorage.get<boolean>("public", false),
+    public: roomStorage.get<boolean>("public", false),
 };
-
-export const fetchLanguages = createAsyncThunk(
-    "editor/getLanguages",
-    async () => {
-        return await getLanguages();
-    }
-);
 
 export const setRoom = createAsyncThunk(
     "editor/setRoom",
-    async (data: { roomId: string; roomName: string }) => {
+    async (data: { roomId: string }) => {
         return await getRoom(data.roomId);
     }
 );
@@ -123,7 +115,7 @@ const roomSlice = createSlice({
             state.code = "";
             state.terminalData = null;
             state.users = [];
-            // state.public = false;
+            state.public = false;
             roomStorage.clear();
         },
     },
@@ -157,7 +149,7 @@ const roomSlice = createSlice({
                 state.code = "";
                 state.terminalData = null;
                 state.users = [];
-                // state.public = false;
+                state.public = false;
                 roomStorage.clear();
             })
             .addCase(setRoom.fulfilled, (state, action) => {
@@ -167,7 +159,7 @@ const roomSlice = createSlice({
                 state.languageName = action.payload.data.language.name;
                 state.owner = action.payload.data.owner;
                 state.code = action.payload.data.code;
-                // state.public = action.payload.data.public;
+                state.public = action.payload.data.public;
                 roomStorage.set("roomId", action.payload.data.roomId);
                 roomStorage.set("roomName", action.payload.data.roomName);
                 roomStorage.set("languageId", action.payload.data.language.id);
@@ -177,7 +169,7 @@ const roomSlice = createSlice({
                 );
                 roomStorage.set("owner", action.payload.data.owner);
                 roomStorage.set("code", action.payload.data.code);
-                // roomStorage.set("public", action.payload.data.public);
+                roomStorage.set("public", action.payload.data.public);
             })
             .addCase(executeCode.fulfilled, (state, action) => {
                 state.terminalData = action.payload.data;

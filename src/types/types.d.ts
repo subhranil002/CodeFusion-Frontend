@@ -3,11 +3,6 @@ export type User = {
     isTyping: boolean;
 };
 
-export type Language = {
-    id: number;
-    name: string;
-}
-
 export type FormData = {
     userName: string;
     roomId: string[];

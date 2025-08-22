@@ -1,25 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaArrowRight, FaPlus } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
-const LANGUAGES: { value: string; label: string }[] = [
-    { value: "javascript", label: "JavaScript" },
-    { value: "typescript", label: "TypeScript" },
-    { value: "python", label: "Python" },
-    { value: "java", label: "Java" },
-    { value: "cpp", label: "C++" },
-    { value: "csharp", label: "C#" },
-    { value: "go", label: "Go" },
-    { value: "rust", label: "Rust" },
-    { value: "php", label: "PHP" },
-    { value: "ruby", label: "Ruby" },
-];
+import {
+    fetchLanguages,
+    type Language,
+} from "../../redux/slices/DashboardSlice";
 
 function RoomActions() {
+    const {
+        languageList,
+    }: {
+        languageList: Language[];
+    } = useSelector((state: any) => state.dashboard);
     const [selectedLanguage, setSelectedLanguage] =
         useState<string>("javascript");
 
-    const navigate = useNavigate();
+    const dispatch: any = useDispatch();
+
+    useEffect(() => {
+        (async () => {
+            dispatch(fetchLanguages());
+        })();
+    }, []);
 
     return (
         <div className="grid md:grid-cols-2 gap-6 mb-8">
@@ -38,6 +41,18 @@ function RoomActions() {
                         <div>
                             <label className="label">
                                 <span className="label-text font-medium">
+                                    Room Name
+                                </span>
+                            </label>
+                            <input
+                                type="text"
+                                placeholder="Enter a room name"
+                                className="input w-full text-center text-2xl font-mono tracking-widest uppercase"
+                            />
+                        </div>
+                        <div>
+                            <label className="label">
+                                <span className="label-text font-medium">
                                     Programming Language
                                 </span>
                             </label>
@@ -49,9 +64,9 @@ function RoomActions() {
                                 }
                             >
                                 <option disabled={true}>Select language</option>
-                                {LANGUAGES.map((lang) => (
-                                    <option key={lang.value} value={lang.value}>
-                                        {lang.label}
+                                {languageList.map((lang) => (
+                                    <option key={lang.id} value={lang.name}>
+                                        {lang.name}
                                     </option>
                                 ))}
                             </select>
@@ -59,7 +74,7 @@ function RoomActions() {
 
                         <button
                             className="btn btn-lg w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
-                            onClick={() => navigate("/playground")}
+                            onClick={() => {}}
                         >
                             <FaPlus className="w-4 h-4 mr-2" />
                             Create Room
@@ -97,7 +112,7 @@ function RoomActions() {
 
                         <button
                             className="w-full btn btn-outline btn-lg"
-                            onClick={() => navigate("/playground")}
+                            onClick={() => {}}
                         >
                             <FaArrowRight className="w-4 h-4 mr-2" />
                             Join Room

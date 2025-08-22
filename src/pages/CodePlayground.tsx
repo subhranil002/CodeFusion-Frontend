@@ -1,56 +1,36 @@
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import CodeEditor from "../components/CodePlayground/CodeEditor";
 import EditorHeader from "../components/CodePlayground/EditorHeader";
 import Sidebar from "../components/CodePlayground/Sidebar";
 import Terminal from "../components/CodePlayground/Terminal";
-import editorSocket from "../configs/EditorSocketConfig";
-import {
-    fetchLanguages,
-    setUsers,
-} from "../redux/slices/RoomSlice";
-import type { User } from "../types/types";
+import { setRoom } from "../redux/slices/RoomSlice";
 
 function CodePlayground() {
-    const [writeLock, setWriteLock] = useState(false);
     const [fontSize, setFontSize] = useState(18);
-    const dispatch = useDispatch<any>();
+    const { roomId } = useParams();
+    const dispatch: any = useDispatch();
     const navigate = useNavigate();
-    const { users } = useSelector((state: any) => state.room);
-    const location = useLocation();
-    const roomId = location.state?.roomId;
+    const { data: user } = useSelector((state: any) => state.auth);
+    const { owner, public: writable } = useSelector((state: any) => state.room);
 
     useEffect(() => {
-        (async () => {
-            await dispatch(fetchLanguages());
-        })();
-    }, [users, roomId, navigate, dispatch]);
-
-    useEffect(() => {
-        editorSocket.on(
-            "userJoined",
-            ({ userName, users }: { userName: string; users: User[] }) => {
-                dispatch(setUsers(users));
-                toast.success(`${userName} joined the room!`);
-            }
-        );
-        editorSocket.on(
-            "userLeft",
-            ({ userName, users }: { userName: string; users: User[] }) => {
-                dispatch(setUsers(users));
-                toast.success(`${userName} left the room!`);
-            }
-        );
-
-        return () => {
-            editorSocket.off("userJoined");
-            editorSocket.off("userLeft");
-            editorSocket.off("languageUpdate");
-        };
+        if (!roomId) {
+            navigate("/dashboard");
+        } else {
+            dispatch(setRoom({ roomId }));
+        }
     }, []);
+
+    const writeLock = () => {
+        if (user?._id === owner) {
+            return false;
+        }
+
+        return !writable;
+    };
 
     return (
         <Sidebar>
@@ -62,8 +42,7 @@ function CodePlayground() {
                         <div className="bg-base-100 rounded-xl shadow-lg overflow-hidden flex flex-col h-full md:max-h-[95vh]">
                             {/* Editor Header */}
                             <EditorHeader
-                                writeLock={writeLock}
-                                setWriteLock={setWriteLock}
+                                writeLock={writeLock()}
                                 fontSize={fontSize}
                                 setFontSize={setFontSize}
                             />
@@ -71,8 +50,8 @@ function CodePlayground() {
                             <div className="flex-1">
                                 <CodeEditor
                                     options={{
+                                        readOnly: writeLock(),
                                         fontSize: fontSize,
-                                        readOnly: writeLock,
                                     }}
                                 />
                             </div>

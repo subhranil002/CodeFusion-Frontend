@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import {
     FaChevronDown,
     FaCode,
@@ -7,16 +8,18 @@ import {
     FaSignOutAlt,
     FaUser,
 } from "react-icons/fa";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import editorSocket from "../../configs/EditorSocketConfig";
+import { setUsers } from "../../redux/slices/RoomSlice";
 import type { User } from "../../types/types";
 
 function Sidebar({ children }: any) {
     const [copySuccess, setCopySuccess] = useState<string>("");
     const { users, roomId } = useSelector((state: any) => state.room);
     const navigate = useNavigate();
+    const dispatch: any = useDispatch();
 
     const copyToClipboard = () => {
         if (!roomId) return;
@@ -29,11 +32,30 @@ function Sidebar({ children }: any) {
 
     function leaveRoom() {
         editorSocket.emit("leaveRoom", {});
-        navigate("/");
+        navigate("/dashboard");
     }
 
-    console.log(users);
-    
+    useEffect(() => {
+        editorSocket.on(
+            "userJoined",
+            ({ userName, users }: { userName: string; users: User[] }) => {
+                dispatch(setUsers(users));
+                toast.success(`${userName} joined the room!`);
+            }
+        );
+        editorSocket.on(
+            "userLeft",
+            ({ userName, users }: { userName: string; users: User[] }) => {
+                dispatch(setUsers(users));
+                toast.success(`${userName} left the room!`);
+            }
+        );
+
+        return () => {
+            editorSocket.off("userJoined");
+            editorSocket.off("userLeft");
+        };
+    }, []);    
 
     return (
         <div className="drawer md:drawer-open">
