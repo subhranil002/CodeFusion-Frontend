@@ -2,16 +2,14 @@ import toast from "react-hot-toast";
 
 import axiosInstance from "../../configs/AxiosConfig";
 
-export default async function getRoom(
-    roomId: string,
-) {
-    const res = axiosInstance.get(`/rooms/get/${roomId}`);
+export default async function joinRoom(roomId: string) {
+    const res = axiosInstance.get(`/rooms/join/${roomId}`);
     toast.promise(res, {
-        loading: "Getting room...",
+        loading: "Joining room...",
         success: (data) => {
             return data?.data?.message;
         },
-        error: "Failed to get room!",
+        error: "Failed to join room!",
     });
 
     return (await res).data;

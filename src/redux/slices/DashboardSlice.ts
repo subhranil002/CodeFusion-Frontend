@@ -11,9 +11,14 @@ export type Language = {
 export type RoomCardData = {
     roomId: string;
     roomName: string;
-    languageName: string;
+    language: {
+        id: number;
+        name: string;
+    }
     owner: string;
-    public: boolean;
+    anyoneCanEdit: boolean;
+    createdAt: string;
+    updatedAt: string;
 };
 
 export type RoomSliceInitialState = {

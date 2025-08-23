@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import editorSocket from "../../configs/EditorSocketConfig";
-import { setUsers } from "../../redux/slices/RoomSlice";
+import { resetRoomState, setUsers } from "../../redux/slices/RoomSlice";
 import type { User } from "../../types/types";
 
 function Sidebar({ children }: any) {
@@ -55,7 +55,7 @@ function Sidebar({ children }: any) {
             editorSocket.off("userJoined");
             editorSocket.off("userLeft");
         };
-    }, []);    
+    }, []);
 
     return (
         <div className="drawer md:drawer-open">
@@ -195,7 +195,10 @@ function Sidebar({ children }: any) {
                 {/* Leave Button */}
                 <button
                     className="btn btn-error w-[85%] gap-2 absolute bottom-5"
-                    onClick={() => leaveRoom()}
+                    onClick={() => {
+                        leaveRoom();
+                        dispatch(resetRoomState());
+                    }}
                 >
                     <FaSignOutAlt />
                     Leave Room

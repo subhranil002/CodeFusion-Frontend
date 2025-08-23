@@ -6,7 +6,7 @@ import CodeEditor from "../components/CodePlayground/CodeEditor";
 import EditorHeader from "../components/CodePlayground/EditorHeader";
 import Sidebar from "../components/CodePlayground/Sidebar";
 import Terminal from "../components/CodePlayground/Terminal";
-import { setRoom } from "../redux/slices/RoomSlice";
+import { joinRoomById } from "../redux/slices/RoomSlice";
 
 function CodePlayground() {
     const [fontSize, setFontSize] = useState(18);
@@ -14,13 +14,18 @@ function CodePlayground() {
     const dispatch: any = useDispatch();
     const navigate = useNavigate();
     const { data: user } = useSelector((state: any) => state.auth);
-    const { owner, public: writable } = useSelector((state: any) => state.room);
+    const { owner, anyoneCanEdit } = useSelector((state: any) => state.room);
 
     useEffect(() => {
         if (!roomId) {
             navigate("/dashboard");
         } else {
-            dispatch(setRoom({ roomId }));
+            (async () => {
+                const res = await dispatch(joinRoomById({ roomId }));
+                if (!res?.payload?.success) {
+                    navigate("/dashboard");
+                }
+            })();
         }
     }, []);
 
@@ -29,7 +34,7 @@ function CodePlayground() {
             return false;
         }
 
-        return !writable;
+        return !anyoneCanEdit;
     };
 
     return (
