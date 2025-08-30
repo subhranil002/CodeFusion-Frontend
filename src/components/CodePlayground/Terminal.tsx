@@ -43,6 +43,14 @@ function Terminal() {
                         </pre>
                     )}
 
+                    {terminalData?.compile_output && (
+                        <pre data-prefix="!" className="text-error">
+                            <code>
+                                {terminalData.compile_output}
+                            </code>
+                        </pre>
+                    )}
+
                     {terminalData?.stderr && (
                         <pre data-prefix="!" className="text-error">
                             <code>

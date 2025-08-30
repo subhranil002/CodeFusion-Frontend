@@ -5,7 +5,6 @@ import CodePlayground from "../pages/CodePlayground";
 import ContactUs from "../pages/Contact";
 import Dashboard from "../pages/Dashboard";
 import Home from "../pages/Home";
-import JoinRoom from "../pages/JoinRoom";
 import NotFound from "../pages/NotFound";
 import Profile from "../pages/Profile";
 import SignIn from "../pages/SignIn";
@@ -20,7 +19,6 @@ function Router() {
             <Route path="/contact" element={<ContactUs />} />
             <Route element={<RequireAuth />}>
                 <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/join" element={<JoinRoom />} />
                 <Route
                     path="/playground/:roomId"
                     element={<CodePlayground />}

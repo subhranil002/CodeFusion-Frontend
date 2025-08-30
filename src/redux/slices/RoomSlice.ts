@@ -7,7 +7,7 @@ import joinRoom from "../../apis/room/joinRoom";
 import updateRoom from "../../apis/room/updateRoom";
 import editorSocket from "../../configs/EditorSocketConfig";
 import type { TerminalData, User } from "../../types/types";
-import { guestLogin, login, logout, register } from "./AuthSlice";
+import { logout } from "./AuthSlice";
 
 const roomStorage = {
     get: <T>(key: string, defaultValue: T): T => {
@@ -117,12 +117,15 @@ const roomSlice = createSlice({
     reducers: {
         setUsers(state, action) {
             state.users = action.payload;
+            roomStorage.set("users", action.payload);
         },
         setCode(state, action) {
             state.code = action.payload;
+            roomStorage.set("code", action.payload);
         },
         setTerminalData(state, action) {
             state.terminalData = action.payload;
+            roomStorage.set("terminalData", action.payload);
         },
         resetRoomState(state) {
             state.roomId = "";
@@ -139,24 +142,6 @@ const roomSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(register.fulfilled, (state, action) => {
-                state.users.push({
-                    name: action.payload.data.fullName.split(" ")[0],
-                    isTyping: false,
-                });
-            })
-            .addCase(login.fulfilled, (state, action) => {
-                state.users.push({
-                    name: action.payload.data.fullName.split(" ")[0],
-                    isTyping: false,
-                });
-            })
-            .addCase(guestLogin.fulfilled, (state, action) => {
-                state.users.push({
-                    name: action.payload.data.fullName.split(" ")[0],
-                    isTyping: false,
-                });
-            })
             .addCase(logout.fulfilled, (state) => {
                 state.roomId = "";
                 state.roomName = "";

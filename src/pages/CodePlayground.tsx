@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -6,7 +7,8 @@ import CodeEditor from "../components/CodePlayground/CodeEditor";
 import EditorHeader from "../components/CodePlayground/EditorHeader";
 import Sidebar from "../components/CodePlayground/Sidebar";
 import Terminal from "../components/CodePlayground/Terminal";
-import { joinRoomById } from "../redux/slices/RoomSlice";
+import editorSocket from "../configs/EditorSocketConfig";
+import { joinRoomById, resetRoomState } from "../redux/slices/RoomSlice";
 
 function CodePlayground() {
     const [fontSize, setFontSize] = useState(18);
@@ -20,13 +22,40 @@ function CodePlayground() {
         if (!roomId) {
             navigate("/dashboard");
         } else {
-            (async () => {
-                const res = await dispatch(joinRoomById({ roomId }));
-                if (!res?.payload?.success) {
+            editorSocket.emit("verifyUniqueUser", {
+                roomId: roomId,
+                userId: user?._id,
+            });
+
+            editorSocket.on("uniqueUser", async (unique: boolean) => {
+                if (unique) {
+                    const res = await dispatch(joinRoomById({ roomId }));
+                    if (!res?.payload?.success) {
+                        navigate("/dashboard");
+                    }
+                    editorSocket.emit("join", {
+                        roomId: roomId,
+                        userId: user?._id,
+                        userName: user?.fullName.split(" ")[0],
+                        avatar: user?.avatar?.secure_url,
+                    });
+                } else {
+                    toast.error("You are already in this room!");
                     navigate("/dashboard");
                 }
-            })();
+            });
         }
+
+        editorSocket.on("IAMKICKED", () => {
+            dispatch(resetRoomState());
+            navigate("/dashboard");
+            toast.error("You have been kicked from the room!");
+        });
+
+        return () => {
+            editorSocket.off("uniqueUser");
+            editorSocket.off("IAMKICKED");
+        };
     }, []);
 
     const writeLock = () => {

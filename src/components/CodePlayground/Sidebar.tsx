@@ -1,13 +1,6 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import {
-    FaChevronDown,
-    FaCode,
-    FaCopy,
-    FaKeyboard,
-    FaSignOutAlt,
-    FaUser,
-} from "react-icons/fa";
+import { FaCode, FaCopy, FaSignOutAlt, FaTimes, FaUser } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -17,7 +10,8 @@ import type { User } from "../../types/types";
 
 function Sidebar({ children }: any) {
     const [copySuccess, setCopySuccess] = useState<string>("");
-    const { users, roomId } = useSelector((state: any) => state.room);
+    const { users, roomId, owner } = useSelector((state: any) => state.room);
+    const { data: userData } = useSelector((state: any) => state.auth);
     const navigate = useNavigate();
     const dispatch: any = useDispatch();
 
@@ -28,11 +22,14 @@ function Sidebar({ children }: any) {
         setTimeout(() => setCopySuccess(""), 2000);
     };
 
-    const typingUsers = users.filter((user: User) => user.isTyping);
-
     function leaveRoom() {
-        editorSocket.emit("leaveRoom", {});
+        editorSocket.emit("leaveRoom");
+        dispatch(resetRoomState());
         navigate("/dashboard");
+    }
+
+    function kickUser(userId: string) {
+        editorSocket.emit("kickCall", userId);
     }
 
     useEffect(() => {
@@ -43,6 +40,10 @@ function Sidebar({ children }: any) {
                 toast.success(`${userName} joined the room!`);
             }
         );
+        editorSocket.on("updateUsers", ({ users }: { users: User[] }) => {
+            dispatch(setUsers(users));
+            console.log(users);
+        });
         editorSocket.on(
             "userLeft",
             ({ userName, users }: { userName: string; users: User[] }) => {
@@ -50,10 +51,15 @@ function Sidebar({ children }: any) {
                 toast.success(`${userName} left the room!`);
             }
         );
+        editorSocket.on("kickCall", (userId: { userId: string }) => {
+            editorSocket.emit("kickAction", userId);
+        });
 
         return () => {
             editorSocket.off("userJoined");
+            editorSocket.off("updateUsers");
             editorSocket.off("userLeft");
+            editorSocket.off("kickCall");
         };
     }, []);
 
@@ -111,94 +117,69 @@ function Sidebar({ children }: any) {
                     </h3>
 
                     <div className="space-y-2">
-                        <div className="collapse bg-base-200 border border-base-300 overflow-visible">
-                            <input type="checkbox" className="peer" />
-                            <div className="collapse-title p-3 flex items-center justify-between">
-                                <div className="avatar-group -space-x-4">
-                                    {users
-                                        .slice(0, 5)
-                                        .map((user: User, index: number) => (
-                                            <div className="avatar" key={index}>
-                                                <div className="w-10 rounded-full ring-2 ring-base-100">
-                                                    <img
-                                                        src="https://img.freepik.com/free-vector/hacker-operating-laptop-cartoon-icon-illustration-technology-icon-concept-isolated-flat-cartoon-style_138676-2387.jpg?semt=ais_hybrid&w=740"
-                                                        alt={user.name}
-                                                    />
-                                                </div>
-                                            </div>
-                                        ))}
-                                    {users.length > 5 && (
-                                        <div className="avatar">
-                                            <div className="w-10 rounded-full ring-2 ring-base-100">
-                                                <span>+{users.length - 5}</span>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                                <FaChevronDown className="text-base" />
-                            </div>
-                            <div className="collapse-content">
-                                <ul className="pt-2 space-y-2">
-                                    {users
-                                        .slice(0, 5)
-                                        .map((user: User, index: number) => (
-                                            <li
-                                                key={index}
-                                                className="flex items-center gap-3 bg-base-100 px-4 py-3 rounded-lg"
+                        <div className="card bg-base-200 border border-base-300 shadow-sm overflow-visible">
+                            <div className="card-body p-2">
+                                <ul className="space-y-2 pt-2">
+                                    {users.slice(0, 5).map((user: User) => (
+                                        <li key={user.id} className="p-0">
+                                            <button
+                                                type="button"
+                                                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-base-100 hover:outline-none hover:ring-2 hover:ring-primary"
                                             >
                                                 <div className="avatar">
-                                                    <div className="w-8 rounded-full">
+                                                    <div className="w-10 rounded-full ring ring-offset-2 ring-primary/20 overflow-hidden">
                                                         <img
-                                                            src="https://img.freepik.com/free-vector/hacker-operating-laptop-cartoon-icon-illustration-technology-icon-concept-isolated-flat-cartoon-style_138676-2387.jpg?semt=ais_hybrid&w=740"
-                                                            alt={user.name}
+                                                            src={user.avatar}
+                                                            alt={`${user.name} avatar`}
                                                         />
                                                     </div>
                                                 </div>
-                                                <span className="truncate font-medium">
-                                                    {user.name}
-                                                </span>
+
+                                                <div className="min-w-0 grow text-left">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="truncate font-medium text-sm">
+                                                            {user.name}
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                {/* typing indicator */}
                                                 {user.isTyping && (
-                                                    <span className="badge badge-info badge-xs ml-auto">
-                                                        typing
-                                                    </span>
+                                                    <div className="ml-2 flex items-center gap-2">
+                                                        <span className="loading loading-dots loading-sm" />
+                                                        <span className="text-sm text-info">
+                                                            typing
+                                                        </span>
+                                                    </div>
                                                 )}
-                                            </li>
-                                        ))}
+
+                                                {owner === userData?._id &&
+                                                    userData?._id !==
+                                                        user?.id && (
+                                                        <button
+                                                            className="btn btn-error btn-xs"
+                                                            onClick={() =>
+                                                                kickUser(
+                                                                    user.id
+                                                                )
+                                                            }
+                                                        >
+                                                            <FaTimes />
+                                                        </button>
+                                                    )}
+                                            </button>
+                                        </li>
+                                    ))}
                                 </ul>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Typing Indicator */}
-                {typingUsers.length > 0 && (
-                    <div className="mb-6 bg-info/10 p-3 rounded-lg border border-info/20">
-                        <div className="flex items-center gap-2 text-info">
-                            <FaKeyboard className="animate-pulse min-w-10" />
-                            {typingUsers.length > 1
-                                ? `${typingUsers
-                                      .slice(0, -1)
-                                      .map((u: User) => u.name.split(" ")[0])
-                                      .join(", ")} 
-                                            and ${
-                                                typingUsers[
-                                                    typingUsers.length - 1
-                                                ].name.split(" ")[0]
-                                            } are typing...`
-                                : `${
-                                      typingUsers[0].name.split(" ")[0]
-                                  } is typing...`}
-                        </div>
-                    </div>
-                )}
-
                 {/* Leave Button */}
                 <button
                     className="btn btn-error w-[85%] gap-2 absolute bottom-5"
-                    onClick={() => {
-                        leaveRoom();
-                        dispatch(resetRoomState());
-                    }}
+                    onClick={() => leaveRoom()}
                 >
                     <FaSignOutAlt />
                     Leave Room

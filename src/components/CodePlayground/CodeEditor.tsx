@@ -1,7 +1,6 @@
 import Editor, { type BeforeMount } from "@monaco-editor/react";
-import debounce from "debounce";
 import blackboard from "monaco-themes/themes/Blackboard.json";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import editorSocket from "../../configs/EditorSocketConfig";
@@ -10,6 +9,7 @@ import { setCode } from "../../redux/slices/RoomSlice";
 function CodeEditor({ options }: any) {
     const dispatch = useDispatch();
     const isTyping = useRef(false);
+    const isRemoteUpdate = useRef(false);
     const timeout = useRef<number | null>(null);
     const { languageName, code } = useSelector((state: any) => state.room);
 
@@ -19,6 +19,7 @@ function CodeEditor({ options }: any) {
 
     useEffect(() => {
         editorSocket.on("codeUpdate", (newCode: string) => {
+            isRemoteUpdate.current = true;
             dispatch(setCode(newCode));
         });
 
@@ -43,13 +44,8 @@ function CodeEditor({ options }: any) {
         }, 500);
     }
 
-    const debouncedChange = useMemo(
-        () =>
-            debounce((value: string | undefined) => {
-                editorSocket.emit("codeChange", { code: value });
-            }, 500),
-        []
-    );
+    const codeChange = (value: string | undefined) =>
+        editorSocket.emit("codeChange", { code: value });
 
     return (
         <Editor
@@ -60,9 +56,14 @@ function CodeEditor({ options }: any) {
             theme="blackboard"
             beforeMount={handleMount}
             onChange={(value) => {
+                if (isRemoteUpdate.current) {
+                    isRemoteUpdate.current = false;
+                    return;
+                }
+
                 handleTyping();
                 dispatch(setCode(value ?? ""));
-                debouncedChange(value);
+                codeChange(value);
             }}
             options={{
                 wordWrap: "on",

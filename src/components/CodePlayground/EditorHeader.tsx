@@ -12,14 +12,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { executeCode } from "../../redux/slices/RoomSlice";
 import UserInput from "./UserInput";
 
-function EditorHeader({
-    writeLock,
-    fontSize,
-    setFontSize,
-}: any) {
-    const { languageId, languageName, code } = useSelector(
+function EditorHeader({ writeLock, fontSize, setFontSize }: any) {
+    const { languageId, languageName, code, owner } = useSelector(
         (state: any) => state.room
     );
+    const { data: user } = useSelector((state: any) => state.auth);
     const [userInput, setUserInput] = useState(false);
     const [runCode, setRunCode] = useState(false);
     const [userInputValue, setUserInputValue] = useState("");
@@ -51,13 +48,13 @@ function EditorHeader({
                 {/* Left Section */}
                 <div className="flex flex-wrap items-center gap-3">
                     {/* Language Selector */}
-                        <div
-                            tabIndex={0}
-                            role="button"
-                            className="btn btn-sm btn-outline rounded-tl-xl flex items-center gap-2 h-8"
-                        >
-                            <span>{languageName.toUpperCase()}</span>
-                        </div>
+                    <div
+                        tabIndex={0}
+                        role="button"
+                        className="btn btn-sm btn-outline rounded-tl-xl flex items-center gap-2 h-8"
+                    >
+                        <span>{languageName.toUpperCase()}</span>
+                    </div>
 
                     {/* Font Size Controls */}
                     <div className="dropdown dropdown-center">
@@ -95,14 +92,22 @@ function EditorHeader({
                     {/* Write Lock Toggle */}
                     <span
                         className={`badge h-8 ${
-                            writeLock ? "badge-error" : "badge-success"
+                            owner === user?._id || !writeLock
+                                ? "badge-success"
+                                : "badge-error"
                         }`}
                     >
-                        {writeLock ? <FaLock /> : <FaLockOpen />}
+                        {owner === user?._id || !writeLock ? (
+                            <FaLockOpen />
+                        ) : (
+                            <FaLock />
+                        )}
                         <span className="font-semibold">
-                            {writeLock
-                                ? "Someone is writing code"
-                                : "Writeable"}
+                            {owner === user?._id
+                                ? "Owner"
+                                : writeLock
+                                ? "View Only"
+                                : "Anyone Can Edit"}
                         </span>
                     </span>
                 </div>
@@ -114,6 +119,7 @@ function EditorHeader({
                         <button
                             className="btn btn-info btn-sm pr-12"
                             onClick={() => setUserInput(!userInput)}
+                            disabled={writeLock}
                         >
                             <span className="font-bold">User Input</span>
                         </button>
@@ -123,6 +129,7 @@ function EditorHeader({
                                 type="checkbox"
                                 checked={userInput}
                                 onChange={() => setUserInput(!userInput)}
+                                disabled={writeLock}
                             />
                             <FaTimes />
                             <FaCheck />
@@ -132,7 +139,7 @@ function EditorHeader({
                     {/* Run Code Button */}
                     <button
                         className="btn btn-sm btn-warning font-bold min-w-20"
-                        disabled={runCode}
+                        disabled={runCode || writeLock}
                         onClick={() => {
                             if (userInput) {
                                 const element = document.getElementById(
