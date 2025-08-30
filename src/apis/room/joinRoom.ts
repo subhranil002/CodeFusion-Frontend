@@ -9,7 +9,6 @@ export default async function joinRoom(roomId: string) {
         success: (data) => {
             return data?.data?.message;
         },
-        error: "Failed to join room!",
     });
 
     return (await res).data;

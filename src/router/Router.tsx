@@ -1,4 +1,6 @@
-import { Route, Routes } from "react-router-dom";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { Route, Routes, useLocation } from "react-router-dom";
 
 import RequireAuth from "../components/Auth/RequireAuth";
 import CodePlayground from "../pages/CodePlayground";
@@ -9,8 +11,28 @@ import NotFound from "../pages/NotFound";
 import Profile from "../pages/Profile";
 import SignIn from "../pages/SignIn";
 import SignUp from "../pages/SignUp";
+import { getProfile } from "../redux/slices/AuthSlice";
 
 function Router() {
+    const dispatch: any = useDispatch();
+    const location = useLocation();
+
+    const paths = ["/", "/signup", "/signin", "/contact"];
+
+    useEffect(() => {
+        if (!paths.includes(location.pathname)) {
+            (async () => {
+                await dispatch(getProfile());
+            })();
+        }
+    }, [location.pathname]);
+
+    useEffect(() => {
+        (async () => {
+            await dispatch(getProfile());
+        })();
+    }, []);
+
     return (
         <Routes>
             <Route path="/" element={<Home />} />

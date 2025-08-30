@@ -33,9 +33,6 @@ function RoomActions() {
     useEffect(() => {
         (async () => {
             await dispatch(fetchLanguages());
-            if (languageList.length > 0 && !selectedLanguage) {
-                setSelectedLanguage(languageList[0]);
-            }
         })();
     }, []);
 

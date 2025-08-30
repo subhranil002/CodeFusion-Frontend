@@ -77,15 +77,18 @@ function RoomCard({ room }: { room: RoomCardData }) {
     };
 
     const handleEditRoom = async () => {
-        await dispatch(
+        const res = await dispatch(
             updateRoomData({
                 roomId: room.roomId,
                 roomName,
                 anyoneCanEdit,
             })
         );
+        if (res.payload.success) {
+            dispatch(fetchRooms());
+            toast.success("Room details updated successfully!");
+        }
         setEditModalOpen(false);
-        dispatch(fetchRooms());
     };
 
     const deleteRoom = async () => {
@@ -212,23 +215,22 @@ function RoomCard({ room }: { room: RoomCardData }) {
                             </button>
 
                             {isOwner && (
-                                <>
-                                    <button
-                                        className="btn btn-ghost btn-square btn-sm text-warning hover:bg-warning/20"
-                                        title="Edit room"
-                                        onClick={() => setEditModalOpen(true)}
-                                    >
-                                        <FaEdit className="w-4 h-4" />
-                                    </button>
-                                    <button
-                                        className="btn btn-ghost btn-square btn-sm text-error hover:bg-error/20"
-                                        title="Delete room"
-                                        onClick={deleteRoom}
-                                    >
-                                        <FaTrash className="w-4 h-4" />
-                                    </button>
-                                </>
+                                <button
+                                    className="btn btn-ghost btn-square btn-sm text-warning hover:bg-warning/20"
+                                    title="Edit room"
+                                    onClick={() => setEditModalOpen(true)}
+                                >
+                                    <FaEdit className="w-4 h-4" />
+                                </button>
                             )}
+                            
+                            <button
+                                className="btn btn-ghost btn-square btn-sm text-error hover:bg-error/20"
+                                title="Delete room"
+                                onClick={deleteRoom}
+                            >
+                                <FaTrash className="w-4 h-4" />
+                            </button>
                         </div>
                     </div>
 

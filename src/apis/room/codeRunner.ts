@@ -17,7 +17,6 @@ export default async function codeRunner(
         success: (data) => {
             return data?.data?.message;
         },
-        error: "Failed to run code!",
     });
 
     return (await res).data;

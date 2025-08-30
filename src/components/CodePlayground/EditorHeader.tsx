@@ -1,4 +1,5 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
 import {
     FaCheck,
     FaChevronDown,
@@ -9,11 +10,11 @@ import {
 } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 
-import { executeCode } from "../../redux/slices/RoomSlice";
+import { executeCode, updateRoomData } from "../../redux/slices/RoomSlice";
 import UserInput from "./UserInput";
 
 function EditorHeader({ writeLock, fontSize, setFontSize }: any) {
-    const { languageId, languageName, code, owner } = useSelector(
+    const { roomId, languageId, languageName, code, owner } = useSelector(
         (state: any) => state.room
     );
     const { data: user } = useSelector((state: any) => state.auth);
@@ -37,6 +38,13 @@ function EditorHeader({ writeLock, fontSize, setFontSize }: any) {
         });
     };
 
+    const saveCodeToCloud = async () => {
+        const res = await dispatch(updateRoomData({ roomId, code }));
+        if (res.payload.success) {
+            toast.success("Code saved successfully!");
+        }
+    };
+
     return (
         <>
             <UserInput
@@ -48,13 +56,9 @@ function EditorHeader({ writeLock, fontSize, setFontSize }: any) {
                 {/* Left Section */}
                 <div className="flex flex-wrap items-center gap-3">
                     {/* Language Selector */}
-                    <div
-                        tabIndex={0}
-                        role="button"
-                        className="btn btn-sm btn-outline rounded-tl-xl flex items-center gap-2 h-8"
-                    >
+                    <button className="btn btn-sm btn-outline rounded-tl-xl flex items-center gap-2 h-8">
                         <span>{languageName.toUpperCase()}</span>
-                    </div>
+                    </button>
 
                     {/* Font Size Controls */}
                     <div className="dropdown dropdown-center">
@@ -89,7 +93,7 @@ function EditorHeader({ writeLock, fontSize, setFontSize }: any) {
                         </ul>
                     </div>
 
-                    {/* Write Lock Toggle */}
+                    {/* Write Lock */}
                     <span
                         className={`badge h-8 ${
                             owner === user?._id || !writeLock
@@ -110,6 +114,15 @@ function EditorHeader({ writeLock, fontSize, setFontSize }: any) {
                                 : "Anyone Can Edit"}
                         </span>
                     </span>
+
+                    {/* Save Code to Cloud */}
+                    <button
+                        className="btn btn-sm btn-error"
+                        onClick={() => saveCodeToCloud()}
+                        disabled={owner !== user?._id}
+                    >
+                        Save Code
+                    </button>
                 </div>
 
                 {/* Right Section */}
@@ -119,7 +132,6 @@ function EditorHeader({ writeLock, fontSize, setFontSize }: any) {
                         <button
                             className="btn btn-info btn-sm pr-12"
                             onClick={() => setUserInput(!userInput)}
-                            disabled={writeLock}
                         >
                             <span className="font-bold">User Input</span>
                         </button>
@@ -129,7 +141,6 @@ function EditorHeader({ writeLock, fontSize, setFontSize }: any) {
                                 type="checkbox"
                                 checked={userInput}
                                 onChange={() => setUserInput(!userInput)}
-                                disabled={writeLock}
                             />
                             <FaTimes />
                             <FaCheck />
@@ -139,7 +150,7 @@ function EditorHeader({ writeLock, fontSize, setFontSize }: any) {
                     {/* Run Code Button */}
                     <button
                         className="btn btn-sm btn-warning font-bold min-w-20"
-                        disabled={runCode || writeLock}
+                        disabled={runCode}
                         onClick={() => {
                             if (userInput) {
                                 const element = document.getElementById(

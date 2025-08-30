@@ -45,7 +45,7 @@ const resetAuthState = (state: initialStateType) => {
     authStorage.clear();
 };
 
-const handleError = (error: unknown) => {
+export const handleError = (error: unknown) => {
     if (typeof error === "object" && error !== null && "response" in error) {
         const err = error as {
             response?: {

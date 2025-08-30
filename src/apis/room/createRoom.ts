@@ -17,7 +17,6 @@ export default async function createRoom(
         success: (data) => {
             return data?.data?.message;
         },
-        error: "Failed to create room!",
     });
 
     return (await res).data;

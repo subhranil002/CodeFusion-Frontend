@@ -15,10 +15,6 @@ export default async function updateRoom(
     });
     toast.promise(res, {
         loading: "Updating room...",
-        success: (data) => {
-            return data?.data?.message;
-        },
-        error: "Failed to update room!",
     });
 
     return (await res).data;

@@ -49,7 +49,7 @@ function CodePlayground() {
         editorSocket.on("IAMKICKED", () => {
             dispatch(resetRoomState());
             navigate("/dashboard");
-            toast.error("You have been kicked from the room!");
+            toast.error("You’ve been kicked out from the room!");
         });
 
         return () => {

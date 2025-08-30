@@ -7,7 +7,7 @@ import joinRoom from "../../apis/room/joinRoom";
 import updateRoom from "../../apis/room/updateRoom";
 import editorSocket from "../../configs/EditorSocketConfig";
 import type { TerminalData, User } from "../../types/types";
-import { logout } from "./AuthSlice";
+import { handleError, logout } from "./AuthSlice";
 
 const roomStorage = {
     get: <T>(key: string, defaultValue: T): T => {
@@ -61,7 +61,11 @@ const initialState: RoomSliceInitialState = {
 export const joinRoomById = createAsyncThunk(
     "editor/joinRoomById",
     async (data: { roomId: string }) => {
-        return await joinRoom(data.roomId);
+        try {
+            return await joinRoom(data.roomId);
+        } catch (error) {
+            handleError(error);
+        }
     }
 );
 
@@ -72,11 +76,15 @@ export const createNewRoom = createAsyncThunk(
         languageId: number;
         languageName: string;
     }) => {
-        return await createRoom(
-            data.roomName,
-            data.languageId,
-            data.languageName
-        );
+        try {
+            return await createRoom(
+                data.roomName,
+                data.languageId,
+                data.languageName
+            );
+        } catch (error) {
+            handleError(error);
+        }
     }
 );
 
@@ -88,26 +96,38 @@ export const updateRoomData = createAsyncThunk(
         code?: string;
         anyoneCanEdit?: boolean;
     }) => {
-        return await updateRoom(
-            data.roomId,
-            data?.roomName,
-            data?.code,
-            data?.anyoneCanEdit
-        );
+        try {
+            return await updateRoom(
+                data.roomId,
+                data?.roomName,
+                data?.code,
+                data?.anyoneCanEdit
+            );
+        } catch (error) {
+            handleError(error);
+        }
     }
 );
 
 export const deleteRoomById = createAsyncThunk(
     "editor/deleteRoomById",
     async (data: { roomId: string }) => {
-        return await deleteRoom(data.roomId);
+        try {
+            return await deleteRoom(data.roomId);
+        } catch (error) {
+            handleError(error);
+        }
     }
 );
 
 export const executeCode = createAsyncThunk(
     "editor/executeCode",
     async (data: { code: string; langId: number; stdIn?: string }) => {
-        return await codeRunner(data.code, data.langId, data?.stdIn);
+        try {
+            return await codeRunner(data.code, data.langId, data?.stdIn);
+        } catch (error) {
+            handleError(error);
+        }
     }
 );
 

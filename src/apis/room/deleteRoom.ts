@@ -9,7 +9,6 @@ export default async function deleteRoom(roomId: string) {
         success: (data) => {
             return data?.data?.message;
         },
-        error: "Failed to delete room!",
     });
 
     return (await res).data;
