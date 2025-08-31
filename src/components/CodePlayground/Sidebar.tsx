@@ -42,7 +42,6 @@ function Sidebar({ children }: any) {
         );
         editorSocket.on("updateUsers", ({ users }: { users: User[] }) => {
             dispatch(setUsers(users));
-            console.log(users);
         });
         editorSocket.on(
             "userLeft",
@@ -62,6 +61,16 @@ function Sidebar({ children }: any) {
             editorSocket.off("kickCall");
         };
     }, []);
+
+    function modifyCloudinaryURL(url: string) {
+        if (import.meta.env.VITE_IMAGE_TRANSFORMATION === "true") {
+            return url.replace(
+                "/upload/",
+                "/upload/ar_1:1,c_auto,g_auto,w_500/r_max/"
+            );
+        }
+        return url;
+    }
 
     return (
         <div className="drawer md:drawer-open">
@@ -122,14 +131,13 @@ function Sidebar({ children }: any) {
                                 <ul className="space-y-2 pt-2">
                                     {users.slice(0, 5).map((user: User) => (
                                         <li key={user.id} className="p-0">
-                                            <button
-                                                type="button"
-                                                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-base-100 hover:outline-none hover:ring-2 hover:ring-primary"
-                                            >
+                                            <div className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-base-100 hover:outline-none hover:ring-2 hover:ring-primary">
                                                 <div className="avatar">
                                                     <div className="w-10 rounded-full ring ring-offset-2 ring-primary/20 overflow-hidden">
                                                         <img
-                                                            src={user.avatar}
+                                                            src={modifyCloudinaryURL(
+                                                                user.avatar
+                                                            )}
                                                             alt={`${user.name} avatar`}
                                                         />
                                                     </div>
@@ -167,7 +175,7 @@ function Sidebar({ children }: any) {
                                                             <FaTimes />
                                                         </button>
                                                     )}
-                                            </button>
+                                            </div>
                                         </li>
                                     ))}
                                 </ul>

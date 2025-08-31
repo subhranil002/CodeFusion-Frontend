@@ -1,6 +1,6 @@
-import DashboardHeader from "../components/Dashboard/DashboardHeader";
-import RoomActions from "../components/Dashboard/RoomActions";
-import RoomList from "../components/Dashboard/RoomList";
+import DashboardHeader from "../../components/Dashboard/DashboardHeader";
+import RoomActions from "../../components/Dashboard/RoomActions";
+import RoomList from "../../components/Dashboard/RoomList";
 
 function Dashboard() {
     return (

@@ -3,12 +3,13 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
-import CodeEditor from "../components/CodePlayground/CodeEditor";
-import EditorHeader from "../components/CodePlayground/EditorHeader";
-import Sidebar from "../components/CodePlayground/Sidebar";
-import Terminal from "../components/CodePlayground/Terminal";
-import editorSocket from "../configs/EditorSocketConfig";
-import { joinRoomById, resetRoomState } from "../redux/slices/RoomSlice";
+import CodeEditor from "../../components/CodePlayground/CodeEditor";
+import EditorHeader from "../../components/CodePlayground/EditorHeader";
+import Sidebar from "../../components/CodePlayground/Sidebar";
+import Terminal from "../../components/CodePlayground/Terminal";
+import editorSocket from "../../configs/EditorSocketConfig";
+import { joinRoomById, resetRoomState } from "../../redux/slices/RoomSlice";
+
 
 function CodePlayground() {
     const [fontSize, setFontSize] = useState(18);

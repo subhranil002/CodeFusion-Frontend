@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { LuLogIn } from "react-icons/lu";
 import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { guestLogin, login } from "../redux/slices/AuthSlice";
 
@@ -22,12 +22,14 @@ function SignIn() {
     } = useForm<FormData>();
     const dispatch: any = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || location.state?.from || "/";
 
     const onSubmit = async (data: FormData) => {
         setIsSubmitting(true);
         const res = await dispatch(login(data));
         if (res?.payload?.success) {
-            navigate("/");
+            navigate(from, { replace: true });
         }
         setIsSubmitting(false);
     };
@@ -36,7 +38,7 @@ function SignIn() {
         setIsSubmitting(true);
         const res = await dispatch(guestLogin());
         if (res?.payload?.success) {
-            navigate("/");
+            navigate(from, { replace: true });
         }
         setIsSubmitting(false);
     };
@@ -143,7 +145,7 @@ function SignIn() {
                                 )}
                                 <div className="text-right mt-2">
                                     <Link
-                                        to="/forgot-password"
+                                        to="/forgotpassword"
                                         className="text-sm text-info hover:underline"
                                     >
                                         Forgot password?
@@ -175,6 +177,8 @@ function SignIn() {
                                 Don't have an account?{" "}
                                 <Link
                                     to="/signup"
+                                    state={{ from }}
+                                    replace
                                     className="text-info hover:underline font-medium"
                                 >
                                     Sign Up

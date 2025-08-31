@@ -30,5 +30,5 @@ export default async function signUp(
         success: "User registered successfully!",
     });
 
-    return (await res).data;
+    return await res;
 }

@@ -4,7 +4,7 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { FiImage, FiUser } from "react-icons/fi";
 import { LuLogIn } from "react-icons/lu";
 import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { register } from "../redux/slices/AuthSlice";
 
@@ -27,12 +27,14 @@ function SignUp() {
     const dispatch: any = useDispatch();
     const navigate = useNavigate();
     const selectedFile = watch("file")?.[0];
+    const location = useLocation();
+    const from = location.state?.from || "/";
 
     const onSubmit = async (data: FormData) => {
         setIsSubmitting(true);
         const res = await dispatch(register(data));
         if (res?.payload?.success) {
-            navigate("/");
+            navigate(from, { replace: true });
         }
         setIsSubmitting(false);
     };
@@ -219,6 +221,8 @@ function SignUp() {
                                 Already have an account?{" "}
                                 <Link
                                     to="/signin"
+                                    state={{ from }}
+                                    replace
                                     className="text-info hover:underline font-medium"
                                 >
                                     Sign In

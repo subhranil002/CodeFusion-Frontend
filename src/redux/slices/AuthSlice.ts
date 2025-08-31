@@ -1,11 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import toast from "react-hot-toast";
 
+import changeAvatar from "../../apis/user/changeAvatar";
 import getCurrentUser from "../../apis/user/getCurrentUser";
 import guestSignIn from "../../apis/user/guestSignIn";
 import logoutUser from "../../apis/user/logoutUser";
 import signIn from "../../apis/user/signIn";
 import signUp from "../../apis/user/signUp";
+import updateUser from "../../apis/user/updateUser";
 
 const authStorage = {
     get: <T>(key: string, defaultValue: T): T => {
@@ -61,18 +63,21 @@ export const handleError = (error: unknown) => {
         }
     } else {
         toast.error("An unexpected error occurred");
-        console.log(error);
+        console.error(error);
     }
 };
 
 export const register = createAsyncThunk(
     "auth/register",
-    async (data: {
-        file: any;
-        fullName: string;
-        email: string;
-        password: string;
-    }) => {
+    async (
+        data: {
+            file: any;
+            fullName: string;
+            email: string;
+            password: string;
+        },
+        thunkAPI
+    ) => {
         try {
             return await signUp(
                 data.file[0],
@@ -81,45 +86,70 @@ export const register = createAsyncThunk(
                 data.password
             );
         } catch (error) {
-            handleError(error);
+            return thunkAPI.rejectWithValue(handleError(error));
         }
     }
 );
 
 export const login = createAsyncThunk(
     "auth/login",
-    async (data: { email: string; password: string }) => {
+    async (data: { email: string; password: string }, thunkAPI) => {
         try {
             return await signIn(data.email, data.password);
         } catch (error) {
-            handleError(error);
+            return thunkAPI.rejectWithValue(handleError(error));
         }
     }
 );
 
-export const guestLogin = createAsyncThunk("auth/guestLogin", async () => {
-    try {
-        return await guestSignIn();
-    } catch (error) {
-        handleError(error);
+export const guestLogin = createAsyncThunk(
+    "auth/guestLogin",
+    async (_, thunkAPI) => {
+        try {
+            return await guestSignIn();
+        } catch (error) {
+            return thunkAPI.rejectWithValue(handleError(error));
+        }
     }
-});
+);
 
-export const logout = createAsyncThunk("auth/logout", async () => {
+export const logout = createAsyncThunk("auth/logout", async (_, thunkAPI) => {
     try {
         return await logoutUser();
     } catch (error) {
-        handleError(error);
+        return thunkAPI.rejectWithValue(handleError(error));
     }
 });
 
-export const getProfile = createAsyncThunk("auth/getProfile", async () => {
-    try {
-        return await getCurrentUser();
-    } catch (error) {
-        handleError(error);
+export const getProfile = createAsyncThunk(
+    "auth/getProfile",
+    async (_, thunkAPI) => {
+        try {
+            return await getCurrentUser();
+        } catch (error) {
+            return thunkAPI.rejectWithValue(handleError(error));
+        }
     }
-});
+);
+
+export const updateProfile = createAsyncThunk(
+    "auth/updateProfile",
+    async (
+        data: { file?: any; fullName?: string; email?: string },
+        thunkAPI
+    ) => {
+        try {
+            if (data?.file?.length) {
+                const avatar = new FormData();
+                avatar.append("avatar", data.file[0]);
+                await changeAvatar(avatar);
+            }
+            return await updateUser(data.fullName, data.email);
+        } catch (error) {
+            return thunkAPI.rejectWithValue(handleError(error));
+        }
+    }
+);
 
 const authSlice = createSlice({
     name: "auth",
@@ -158,7 +188,15 @@ const authSlice = createSlice({
                 authStorage.clear();
             })
             .addCase(getProfile.fulfilled, (state, action) => {
-                state.isLoggedIn = true;
+                state.isLoggedIn = action.payload?.success;
+                state.role = action.payload?.data?.role;
+                state.data = action.payload?.data;
+                authStorage.set("isLoggedIn", action.payload?.success);
+                authStorage.set("role", action.payload?.data?.role);
+                authStorage.set("data", action.payload?.data);
+            })
+            .addCase(updateProfile.fulfilled, (state, action) => {
+                state.isLoggedIn = action.payload?.success;
                 state.role = action.payload?.data?.role;
                 state.data = action.payload?.data;
                 authStorage.set("isLoggedIn", action.payload?.success);
