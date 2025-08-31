@@ -3,14 +3,17 @@ import { useDispatch } from "react-redux";
 import { Route, Routes, useLocation } from "react-router-dom";
 
 import RequireAuth from "../components/Auth/RequireAuth";
-import CodePlayground from "../pages/CodePlayground";
+import CodePlayground from "../pages/Code/CodePlayground";
+import Dashboard from "../pages/Code/Dashboard";
 import ContactUs from "../pages/Contact";
-import Dashboard from "../pages/Dashboard";
 import Home from "../pages/Home";
 import NotFound from "../pages/NotFound";
-import Profile from "../pages/Profile";
 import SignIn from "../pages/SignIn";
 import SignUp from "../pages/SignUp";
+import ChangePassword from "../pages/User/ChangePassword";
+import ForgotPassword from "../pages/User/ForgotPassword";
+import Profile from "../pages/User/Profile";
+import ResetPassword from "../pages/User/ResetPassword";
 import { getProfile } from "../redux/slices/AuthSlice";
 
 function Router() {
@@ -39,6 +42,8 @@ function Router() {
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/contact" element={<ContactUs />} />
+            <Route path="/forgotpassword" element={<ForgotPassword />} />
+            <Route path="/resetpassword/:token" element={<ResetPassword />} />
             <Route element={<RequireAuth />}>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route
@@ -46,6 +51,7 @@ function Router() {
                     element={<CodePlayground />}
                 />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/changepassword" element={<ChangePassword />} />
             </Route>
             <Route path="*" element={<NotFound />} />
         </Routes>
