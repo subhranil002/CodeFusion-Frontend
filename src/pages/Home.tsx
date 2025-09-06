@@ -1,17 +1,13 @@
-import {
-    FaShieldAlt,
-    FaUsers,
-} from "react-icons/fa";
+import { FaShieldAlt, FaUsers } from "react-icons/fa";
 import { FiZap } from "react-icons/fi";
 
 import CTA from "../components/Home/CTA";
 import Features from "../components/Home/Features";
-import Footer from "../components/Home/Footer";
-import Header from "../components/Home/Header";
 import Hero from "../components/Home/Hero";
 import HowItWorks from "../components/Home/HowItWorks";
 import Stats from "../components/Home/Stats";
 import Testimonials from "../components/Home/Testimonials";
+import HomeLayout from "../layouts/HomeLayout";
 
 function Home() {
     const features = [
@@ -59,35 +55,38 @@ function Home() {
             role: "Senior Developer at TechCorp",
             initials: "SM",
             color: "primary",
-            feedback: "CodeFusion has revolutionized how our team collaborates. The real-time editing is seamless and the interface is incredibly intuitive.",
+            feedback:
+                "CodeFusion has revolutionized how our team collaborates. The real-time editing is seamless and the interface is incredibly intuitive.",
         },
         {
             name: "Mike Johnson",
             role: "Lead Engineer at StartupXYZ",
             initials: "MJ",
             color: "accent",
-            feedback: "CodeFusion has revolutionized how our team collaborates. The real-time editing is seamless and the interface is incredibly intuitive.",
+            feedback:
+                "CodeFusion has revolutionized how our team collaborates. The real-time editing is seamless and the interface is incredibly intuitive.",
         },
         {
             name: "Alex Lee",
             role: "Full Stack Developer",
             initials: "AL",
             color: "success",
-            feedback: "CodeFusion has revolutionized how our team collaborates. The real-time editing is seamless and the interface is incredibly intuitive.",
+            feedback:
+                "CodeFusion has revolutionized how our team collaborates. The real-time editing is seamless and the interface is incredibly intuitive.",
         },
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-base-100 to-base-200">
-            <Header />
-            <Hero />
-            <Features features={features} />
-            <HowItWorks steps={steps} />
-            <Stats />
-            <Testimonials testimonials={testimonials} />
-            <CTA />
-            <Footer />
-        </div>
+        <HomeLayout>
+            <div className="min-h-screen bg-gradient-to-br from-base-100 to-base-200">
+                <Hero />
+                <Features features={features} />
+                <HowItWorks steps={steps} />
+                <Stats />
+                <Testimonials testimonials={testimonials} />
+                <CTA />
+            </div>
+        </HomeLayout>
     );
 }
 

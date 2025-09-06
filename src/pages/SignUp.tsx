@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { FiImage, FiUser } from "react-icons/fi";
 import { LuLogIn } from "react-icons/lu";
 import { useDispatch } from "react-redux";
@@ -16,7 +15,6 @@ type FormData = {
 };
 
 function SignUp() {
-    const [showPassword, setShowPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const {
         register: registerInput,
@@ -162,9 +160,7 @@ function SignUp() {
                                 <div className="relative">
                                     <input
                                         id="password"
-                                        type={
-                                            showPassword ? "text" : "password"
-                                        }
+                                        type="password"
                                         placeholder="Enter your password"
                                         className={`input input-bordered w-full pr-12 ${
                                             errors.password ? "input-error" : ""
@@ -183,19 +179,6 @@ function SignUp() {
                                             },
                                         })}
                                     />
-                                    <button
-                                        className="absolute inset-y-0 right-0 flex items-center px-3 cursor-pointer"
-                                        type="button"
-                                        onClick={() =>
-                                            setShowPassword(!showPassword)
-                                        }
-                                    >
-                                        {showPassword ? (
-                                            <FaRegEyeSlash className="h-5 w-5 text-base-content/70" />
-                                        ) : (
-                                            <FaRegEye className="h-5 w-5 text-base-content/70" />
-                                        )}
-                                    </button>
                                 </div>
                                 {errors.password && (
                                     <label className="label mt-1">

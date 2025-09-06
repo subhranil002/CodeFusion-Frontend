@@ -6,6 +6,9 @@ export default async function getRoomsByUser() {
     const res = axiosInstance.get("/users/rooms");
     toast.promise(res, {
         loading: "Getting rooms...",
+        success: (data) => {
+            return data?.data?.message;
+        },
     });
 
     return (await res).data;
