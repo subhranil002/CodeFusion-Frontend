@@ -11,6 +11,7 @@ import NotFound from "../pages/NotFound";
 import SignIn from "../pages/SignIn";
 import SignUp from "../pages/SignUp";
 import ChangePassword from "../pages/User/ChangePassword";
+import EditProfile from "../pages/User/EditProfile";
 import ForgotPassword from "../pages/User/ForgotPassword";
 import Profile from "../pages/User/Profile";
 import ResetPassword from "../pages/User/ResetPassword";
@@ -51,6 +52,7 @@ function Router() {
                     element={<CodePlayground />}
                 />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/editprofile" element={<EditProfile />} />
                 <Route path="/changepassword" element={<ChangePassword />} />
             </Route>
             <Route path="*" element={<NotFound />} />

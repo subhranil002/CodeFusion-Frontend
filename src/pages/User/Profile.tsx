@@ -1,54 +1,34 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { FiCamera, FiEdit2, FiSave } from "react-icons/fi";
+import {
+    FaCheck,
+    FaEdit,
+    FaEnvelope,
+    FaExclamationTriangle,
+    FaKey,
+    FaStar,
+    FaTimes,
+    FaTimesCircle,
+    FaUserTag,
+} from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-import { updateProfile } from "../../redux/slices/AuthSlice";
+import HomeLayout from "../../layouts/HomeLayout";
+import { getProfile } from "../../redux/slices/AuthSlice";
 
 function Profile() {
-    const { data } = useSelector((state: any) => state.auth);
-    const [isEditingProfile, setIsEditingProfile] = useState(false);
-    const [profileLoading, setProfileLoading] = useState(false);
-    const navigate = useNavigate();
-    const {
-        register,
-        handleSubmit,
-        reset,
-        watch,
-        formState: { errors },
-    } = useForm({
-        defaultValues: {
-            fullName: data?.fullName ?? "",
-            email: data?.email ?? "",
-            avatar: data?.avatar?.secure_url ?? "",
-            file: null,
-        },
-    });
-    const selectedFile: any = watch("file")?.[0];
+    const { data } = useSelector((state: any) => state?.auth);
     const dispatch: any = useDispatch();
 
-    const onSubmitProfile = async (formData: any) => {
-        setProfileLoading(true);
-        await dispatch(updateProfile(formData));
-        reset({
-            fullName: formData.fullName ?? data?.fullName ?? "",
-            email: formData.email ?? data?.email ?? "",
-            avatar: "",
-            file: null,
-        });
-        setProfileLoading(false);
-        setIsEditingProfile(false);
-    };
+    async function handleCancelation() {
+        // await dispatch(unsubscribe());
+        await dispatch(getProfile());
+    }
 
-    const handleCancel = () => {
-        reset({
-            fullName: data?.fullName ?? "",
-            email: data?.email ?? "",
-            avatar: data?.avatar?.secure_url ?? "",
-            file: undefined,
-        });
-        setIsEditingProfile(false);
+    const userData = {
+        ...data,
+        subscription: {
+            status: "active",
+        },
     };
 
     function modifyCloudinaryURL(url: string) {
@@ -62,252 +42,177 @@ function Profile() {
     }
 
     return (
-        <div className="min-h-screen bg-base-200">
-            <div className="container mx-auto px-4 py-8 max-w-4xl">
-                <h1 className="text-3xl font-bold mb-6 text-base-content">
-                    My Profile
-                </h1>
-
-                <div className="card bg-base-100 shadow-xl">
-                    <div className="card-body p-6 md:p-8">
-                        <div className="relative">
-                            <div className="transition-all duration-300 ease-in-out opacity-100 translate-x-0 relative">
-                                <div className="space-y-6 mb-6">
-                                    <div className="flex items-center justify-between">
-                                        {!isEditingProfile && (
-                                            <div className="flex gap-2">
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-primary btn-outline btn-sm gap-2"
-                                                    onClick={() =>
-                                                        setIsEditingProfile(
-                                                            true
-                                                        )
-                                                    }
-                                                    aria-label="Edit profile"
-                                                >
-                                                    <FiEdit2 className="h-4 w-4" />
-                                                    Edit
-                                                </button>
-
-                                                {/* ✅ Change Password Button */}
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-secondary btn-outline btn-sm gap-2"
-                                                    onClick={() =>
-                                                        navigate(
-                                                            "/changepassword"
-                                                        )
-                                                    }
-                                                    aria-label="Change password"
-                                                >
-                                                    Change Password
-                                                </button>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {/* Avatar Section */}
-                                    <div className="flex flex-col items-center space-y-4">
-                                        <div className="relative">
-                                            <div className="avatar">
-                                                <div className="w-24 h-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden">
-                                                    {selectedFile?.type?.startsWith(
-                                                        "image/"
-                                                    ) ? (
-                                                        <img
-                                                            src={URL.createObjectURL(
-                                                                selectedFile
-                                                            )}
-                                                            className="rounded-full object-cover w-full h-full"
-                                                            alt="Profile preview"
-                                                        />
-                                                    ) : data?.avatar
-                                                          ?.secure_url ? (
-                                                        <img
-                                                            src={modifyCloudinaryURL(
-                                                                data.avatar
-                                                                    .secure_url
-                                                            )}
-                                                            alt={
-                                                                data.fullName ||
-                                                                "avatar"
-                                                            }
-                                                            className="object-cover w-full h-full"
-                                                        />
-                                                    ) : (
-                                                        <div className="w-full h-full rounded-full bg-neutral flex items-center justify-center text-2xl font-bold text-neutral-content">
-                                                            {
-                                                                data
-                                                                    ?.fullName?.[0]
-                                                            }
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-
-                                            {isEditingProfile && (
-                                                <>
-                                                    <label
-                                                        htmlFor="fileUpload"
-                                                        className="absolute -bottom-2 -right-2 btn btn-circle btn-outline btn-sm cursor-pointer"
-                                                        aria-label="Upload profile picture"
-                                                    >
-                                                        <FiCamera className="h-4 w-4" />
-                                                    </label>
-                                                    <input
-                                                        id="fileUpload"
-                                                        type="file"
-                                                        className="hidden"
-                                                        accept=".jpg, .jpeg, .png"
-                                                        {...register("file")}
-                                                    />
-                                                </>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    {/* Read-only View */}
-                                    {!isEditingProfile && (
-                                        <div className="space-y-4">
-                                            <div className="form-control">
-                                                <label className="label">
-                                                    <span className="label-text text-base-content">
-                                                        Full Name
-                                                    </span>
-                                                </label>
-                                                <div className="py-2 px-4 rounded-lg bg-base-200 text-base-content">
-                                                    {data?.fullName}
-                                                </div>
-                                            </div>
-                                            <div className="form-control">
-                                                <label className="label">
-                                                    <span className="label-text text-base-content">
-                                                        Email Address
-                                                    </span>
-                                                </label>
-                                                <div className="py-2 px-4 rounded-lg bg-base-200 text-base-content">
-                                                    {data?.email}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {/* Editing Form */}
-                                    {isEditingProfile && (
-                                        <form
-                                            onSubmit={handleSubmit(
-                                                onSubmitProfile
-                                            )}
-                                            className="space-y-4"
-                                        >
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                <div className="form-control">
-                                                    <label
-                                                        className="label"
-                                                        htmlFor="name"
-                                                    >
-                                                        <span className="label-text text-base-content">
-                                                            Full Name
-                                                        </span>
-                                                    </label>
-                                                    <input
-                                                        id="name"
-                                                        className={`input input-bordered ${
-                                                            errors.fullName
-                                                                ? "input-error"
-                                                                : ""
-                                                        }`}
-                                                        {...register(
-                                                            "fullName",
-                                                            {
-                                                                required:
-                                                                    "Name is required",
-                                                            }
-                                                        )}
-                                                        placeholder="Enter your full name"
-                                                    />
-                                                    {errors.fullName && (
-                                                        <span className="label-text-alt text-error mt-1">
-                                                            {
-                                                                errors.fullName
-                                                                    .message as string
-                                                            }
-                                                        </span>
-                                                    )}
-                                                </div>
-
-                                                <div className="form-control">
-                                                    <label
-                                                        className="label"
-                                                        htmlFor="email"
-                                                    >
-                                                        <span className="label-text text-base-content">
-                                                            Email Address
-                                                        </span>
-                                                    </label>
-                                                    <input
-                                                        id="email"
-                                                        type="email"
-                                                        className={`input input-bordered ${
-                                                            errors.email
-                                                                ? "input-error"
-                                                                : ""
-                                                        }`}
-                                                        {...register("email", {
-                                                            required:
-                                                                "Email is required",
-                                                            pattern: {
-                                                                value: /^(?=.{1,254}$)(?=.{1,64}@)[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/,
-                                                                message:
-                                                                    "Invalid email format",
-                                                            },
-                                                        })}
-                                                        placeholder="Enter your email"
-                                                    />
-                                                    {errors.email && (
-                                                        <span className="label-text-alt text-error mt-1">
-                                                            {
-                                                                errors.email
-                                                                    .message as string
-                                                            }
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            </div>
-
-                                            <div className="flex flex-col sm:flex-row gap-2 mt-6">
-                                                <button
-                                                    type="submit"
-                                                    className="btn btn-primary flex-1"
-                                                    disabled={profileLoading}
-                                                >
-                                                    {!profileLoading && (
-                                                        <FiSave className="mr-2 h-4 w-4" />
-                                                    )}
-                                                    {profileLoading
-                                                        ? "Saving..."
-                                                        : "Save Changes"}
-                                                </button>
-
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-outline flex-1"
-                                                    onClick={handleCancel}
-                                                    disabled={profileLoading}
-                                                >
-                                                    Cancel
-                                                </button>
-                                            </div>
-                                        </form>
-                                    )}
-                                </div>
+        <HomeLayout>
+            <dialog id="avatar-modal" className="modal">
+                <div className="modal-box max-w-2xl bg-base-100 shadow-xl p-0 overflow-hidden">
+                    <form
+                        method="dialog"
+                        className="absolute right-2 top-2 z-10"
+                    >
+                        <button className="btn btn-circle btn-neutral btn-sm">
+                            <FaTimes className="text-xl" />
+                        </button>
+                    </form>
+                    <div className="flex items-center justify-center min-h-[50vh]">
+                        {userData?.avatar?.secure_url ? (
+                            <img
+                                src={userData.avatar.secure_url}
+                                alt="Full Size Avatar"
+                                className="w-full h-auto object-contain max-h-[70vh]"
+                            />
+                        ) : (
+                            <div className="text-center p-8">
+                                <p className="text-gray-500">
+                                    No avatar available
+                                </p>
                             </div>
+                        )}
+                    </div>
+                </div>
+            </dialog>
+            <dialog id="cancel-subscription-modal" className="modal">
+                <div className="modal-box bg-base-100 border border-error/20 shadow-xl mx-2">
+                    <div className="flex flex-col items-center text-center space-y-4">
+                        <div className="text-error mb-2 sm:mb-4">
+                            <FaExclamationTriangle className="text-4xl sm:text-5xl animate-pulse" />
+                        </div>
+                        <h3 className="font-bold text-xl sm:text-2xl flex items-center gap-2">
+                            Cancel Subscription?
+                        </h3>
+                        <p className="py-2 sm:py-4 text-base sm:text-lg text-base-content/80">
+                            This will revoke your access to all premium content.
+                            <br />
+                            <span className="text-error font-semibold mt-1 sm:mt-2 block text-sm sm:text-base">
+                                This action is irreversible!
+                            </span>
+                        </p>
+                        <div className="modal-action flex flex-col sm:flex-row justify-center gap-2 sm:gap-4 w-full">
+                            <button
+                                className="btn btn-outline btn-sm sm:btn-md gap-2"
+                                onClick={() => {
+                                    const element = document.getElementById(
+                                        "cancel-subscription-modal"
+                                    ) as HTMLDialogElement;
+                                    element?.close();
+                                }}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="btn btn-error btn-sm sm:btn-md gap-2"
+                                onClick={() => {
+                                    const element = document.getElementById(
+                                        "cancel-subscription-modal"
+                                    ) as HTMLDialogElement;
+                                    element?.close();
+                                    handleCancelation();
+                                }}
+                            >
+                                <FaCheck />
+                                Confirm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </dialog>
+            <div className="min-h-[90vh] flex items-center justify-center p-4">
+                <div className="card w-full max-w-md bg-base-100 shadow-xl bg-opacity-90 backdrop-blur-sm">
+                    <div className="card-body items-center text-center gap-4 px-4 sm:px-6">
+                        <div className="avatar online">
+                            <div
+                                className="w-24 sm:w-32 rounded-full ring-2 ring-primary ring-offset-2 sm:ring-offset-4 cursor-pointer hover:ring-primary-focus transition-all"
+                                onClick={() => {
+                                    const element = document.getElementById(
+                                        "avatar-modal"
+                                    ) as HTMLDialogElement;
+                                    element?.showModal();
+                                }}
+                            >
+                                <img
+                                    src={modifyCloudinaryURL(
+                                        userData?.avatar?.secure_url
+                                    )}
+                                    className="object-cover"
+                                    alt="User Avatar"
+                                />
+                            </div>
+                        </div>
+                        <h2 className="card-title text-lg sm:text-xl capitalize">
+                            {userData?.fullName}
+                        </h2>
+                        <div className="w-full text-left space-y-2 sm:space-y-3">
+                            <div className="flex items-center gap-2 text-sm sm:text-base">
+                                <FaEnvelope className="text-primary shrink-0" />
+                                <span className="flex-1">Email:</span>
+                                <span className="font-medium truncate">
+                                    {userData?.email}
+                                </span>
+                            </div>
+                            <div className="flex items-center gap-2 text-sm sm:text-base">
+                                <FaUserTag className="text-secondary shrink-0" />
+                                <span className="flex-1">Role:</span>
+                                <span className="font-medium capitalize">
+                                    {userData?.role}
+                                </span>
+                            </div>
+                            <div className="flex items-center gap-2 text-sm sm:text-base">
+                                <FaStar className="text-accent shrink-0" />
+                                <span className="flex-1">Subscription:</span>
+                                <span
+                                    className={`badge text-black font-semibold text-xs sm:text-sm ${
+                                        userData?.role === "ADMIN"
+                                            ? "badge-success"
+                                            : userData?.subscription?.status ===
+                                              "active"
+                                            ? "badge-success"
+                                            : "badge-error"
+                                    }`}
+                                >
+                                    {userData?.role === "ADMIN"
+                                        ? "Active"
+                                        : userData?.subscription?.status ===
+                                          "active"
+                                        ? "Active"
+                                        : "Inactive"}
+                                </span>
+                            </div>
+                        </div>
+                        <div className="card-actions w-full gap-2 grid grid-cols-1 sm:grid-cols-2">
+                            <Link
+                                to="/changepassword"
+                                className="btn btn-error gap-2 text-sm sm:text-base"
+                            >
+                                <FaKey className="text-sm sm:text-lg" />
+                                <span>Change Password</span>
+                            </Link>
+                            <Link
+                                to="/editprofile"
+                                className="btn btn-info gap-2 text-sm sm:text-base"
+                            >
+                                <FaEdit className="text-sm sm:text-lg" />
+                                <span>Edit Profile</span>
+                            </Link>
+                            {userData?.role !== "ADMIN" &&
+                                userData?.subscription?.status === "active" && (
+                                    <button
+                                        onClick={() => {
+                                            const element =
+                                                document.getElementById(
+                                                    "cancel-subscription-modal"
+                                                ) as HTMLDialogElement;
+                                            element?.showModal();
+                                        }}
+                                        className="btn btn-error gap-2 col-span-full text-sm sm:text-base"
+                                    >
+                                        <FaTimesCircle className="text-sm sm:text-lg" />
+                                        <span>Cancel Subscription</span>
+                                    </button>
+                                )}
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </HomeLayout>
     );
 }
 

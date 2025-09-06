@@ -12,7 +12,7 @@ import { TbCoinRupeeFilled } from "react-icons/tb";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
-import Logo from "../Assets/Images/logo.png";
+import Logo from "../assets/images/logo.png";
 import { logout } from "../redux/slices/AuthSlice";
 
 function Header() {
