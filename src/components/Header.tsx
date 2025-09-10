@@ -1,8 +1,11 @@
+import { useEffect, useState } from "react";
 import {
     FaEnvelope,
     FaInfoCircle,
+    FaMoon,
     FaReceipt,
     FaSignOutAlt,
+    FaSun,
     FaUser,
     FaUserCircle,
 } from "react-icons/fa";
@@ -20,6 +23,11 @@ function Header() {
     const navigate = useNavigate();
     const location = useLocation();
     const { isLoggedIn, role, data } = useSelector((state: any) => state.auth);
+    const [theme, setTheme] = useState(
+        typeof window !== "undefined"
+            ? localStorage.getItem("site-theme") || "dark"
+            : "light"
+    );
 
     async function handleLogout() {
         await dispatch(logout());
@@ -38,8 +46,13 @@ function Header() {
 
     const isActive = (path: string) => location.pathname === path;
 
+    useEffect(() => {
+        document.documentElement.setAttribute("data-theme", theme);
+        localStorage.setItem("site-theme", theme);
+    }, [theme]);
+
     return (
-        <div className="navbar bg-base-100 border-b border-base-300 shadow-sm md:px-8">
+        <div className="navbar bg-base-100 border-b border-base-300 shadow-sm md:px-10">
             <div className="navbar-start">
                 <div className="dropdown">
                     <div
@@ -115,7 +128,7 @@ function Header() {
                         alt="Logo"
                         className="w-8 h-8 md:w-10 md:h-10"
                     />
-                    <span className="text-lg md:text-xl font-bold">
+                    <span className="text-xl md:text-2xl font-bold">
                         CodeFusion
                     </span>
                 </Link>
@@ -209,83 +222,104 @@ function Header() {
                         )}
                     </div>
                 </div>
-                {isLoggedIn ? (
-                    <ul
-                        tabIndex={0}
-                        className="menu menu-base font-semibold dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
-                    >
-                        <li>
-                            <Link
-                                to="/profile"
-                                className={`flex items-center gap-2 rounded-md ${
-                                    isActive("/profile")
-                                        ? "bg-neutral text-neutral-content"
-                                        : ""
-                                }`}
-                            >
-                                <FaUser className="text-lg" />
-                                My Profile
-                            </Link>
-                        </li>
-                        {isLoggedIn &&
-                            (role === "CODER" || role === "GUEST") && (
-                                <li>
-                                    <Link
-                                        to="/purchasehistory"
-                                        className={`flex items-center gap-2 rounded-md ${
-                                            isActive("/purchasehistory")
-                                                ? "bg-neutral text-neutral-content"
-                                                : ""
-                                        }`}
-                                    >
-                                        <FaReceipt className="text-lg" />
-                                        My Purchases
-                                    </Link>
-                                </li>
+                <ul
+                    tabIndex={0}
+                    className="menu menu-base font-semibold dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
+                >
+                    <li>
+                        <button
+                            onClick={() =>
+                                setTheme((t) =>
+                                    t === "light" ? "dark" : "light"
+                                )
+                            }
+                            className="btn btn-ghost"
+                        >
+                            {theme === "light" ? (
+                                <>
+                                    <FaMoon className="w-5 h-5 text-gray-700" />
+                                    <span>Dark Mode</span>
+                                </>
+                            ) : (
+                                <>
+                                    <FaSun className="w-5 h-5 text-yellow-300" />
+                                    <span>Light Mode</span>
+                                </>
                             )}
-                        <li>
-                            <button
-                                onClick={() => handleLogout()}
-                                className="flex items-center gap-2"
-                            >
-                                <FaSignOutAlt className="text-lg" />
-                                Logout
-                            </button>
-                        </li>
-                    </ul>
-                ) : (
-                    <ul
-                        tabIndex={0}
-                        className="menu menu-base font-semibold dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
-                    >
-                        <li>
-                            <Link
-                                to="/signin"
-                                className={`flex items-center gap-2 rounded-md ${
-                                    isActive("/signin")
-                                        ? "bg-neutral text-neutral-content"
-                                        : ""
-                                }`}
-                            >
-                                <FaSignOutAlt className="text-lg" />
-                                Sign In
-                            </Link>
-                        </li>
-                        <li>
-                            <Link
-                                to="/signup"
-                                className={`flex items-center gap-2 rounded-md ${
-                                    isActive("/signup")
-                                        ? "bg-neutral text-neutral-content"
-                                        : ""
-                                }`}
-                            >
-                                <FaUser className="text-lg" />
-                                Signup
-                            </Link>
-                        </li>
-                    </ul>
-                )}
+                        </button>
+                    </li>
+                    {isLoggedIn ? (
+                        <>
+                            <li>
+                                <Link
+                                    to="/profile"
+                                    className={`flex items-center gap-2 rounded-md ${
+                                        isActive("/profile")
+                                            ? "bg-neutral text-neutral-content"
+                                            : ""
+                                    }`}
+                                >
+                                    <FaUser className="text-lg" />
+                                    My Profile
+                                </Link>
+                            </li>
+                            {isLoggedIn &&
+                                (role === "CODER" || role === "GUEST") && (
+                                    <li>
+                                        <Link
+                                            to="/purchasehistory"
+                                            className={`flex items-center gap-2 rounded-md ${
+                                                isActive("/purchasehistory")
+                                                    ? "bg-neutral text-neutral-content"
+                                                    : ""
+                                            }`}
+                                        >
+                                            <FaReceipt className="text-lg" />
+                                            My Purchases
+                                        </Link>
+                                    </li>
+                                )}
+                            <li>
+                                <button
+                                    onClick={() => handleLogout()}
+                                    className="flex items-center gap-2"
+                                >
+                                    <FaSignOutAlt className="text-lg" />
+                                    Logout
+                                </button>
+                            </li>
+                        </>
+                    ) : (
+                        <>
+                            <li>
+                                <Link
+                                    to="/signin"
+                                    className={`flex items-center gap-2 rounded-md ${
+                                        isActive("/signin")
+                                            ? "bg-neutral text-neutral-content"
+                                            : ""
+                                    }`}
+                                >
+                                    <FaSignOutAlt className="text-lg" />
+                                    Sign In
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    to="/signup"
+                                    className={`flex items-center gap-2 rounded-md ${
+                                        isActive("/signup")
+                                            ? "bg-neutral text-neutral-content"
+                                            : ""
+                                    }`}
+                                >
+                                    <FaUser className="text-lg" />
+                                    Signup
+                                </Link>
+                            </li>
+                        </>
+                    )}
+                </ul>
             </div>
         </div>
     );
