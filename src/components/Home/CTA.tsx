@@ -15,14 +15,11 @@ function CTA() {
                     </p>
                     <div className="card-actions justify-center">
                         <Link to="/dashboard">
-                            <button className="btn btn-primary btn-lg gap-2 group">
+                            <button className="btn btn-warning md:btn-lg gap-2 group">
                                 Start Coding Together
                                 <FaRocket className="group-hover:animate-pulse" />
                             </button>
                         </Link>
-                        <button className="btn btn-outline btn-lg hover:bg-base-200">
-                            View Documentation
-                        </button>
                     </div>
                 </div>
             </div>
