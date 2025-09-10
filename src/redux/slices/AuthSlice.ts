@@ -123,11 +123,11 @@ export const logout = createAsyncThunk("auth/logout", async (_, thunkAPI) => {
 
 export const getProfile = createAsyncThunk(
     "auth/getProfile",
-    async (_, thunkAPI) => {
+    async () => {
         try {
             return await getCurrentUser();
         } catch (error) {
-            return thunkAPI.rejectWithValue(handleError(error));
+            console.log(error);
         }
     }
 );
