@@ -6,28 +6,62 @@ import {
     FaTwitter,
     FaYoutube,
 } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import Logo from "../assets/images/logo.png";
 
 function Footer() {
+    const navigate = useNavigate();
     const footerLinks = [
         {
             title: "Product",
-            items: ["Features", "Pricing", "Documentation", "API", "Templates"],
+            items: [
+                {
+                    name: "Pricing",
+                    to: "/pricing",
+                },
+                {
+                    name: "Documentation",
+                    to: "/documentation",
+                },
+                {
+                    name: "API",
+                    to: "/api",
+                },
+            ],
         },
         {
             title: "Company",
-            items: ["About", "Blog", "Careers", "Contact", "Press"],
+            items: [
+                {
+                    name: "About",
+                    to: "/about",
+                },
+                {
+                    name: "Careers",
+                    to: "/careers",
+                },
+                {
+                    name: "Contact",
+                    to: "/contact",
+                },
+            ],
         },
         {
             title: "Support",
             items: [
-                "Help Center",
-                "Community",
-                "Status",
-                "Security",
-                "Feedback",
+                {
+                    name: "Help Center",
+                    to: "/help-center",
+                },
+                {
+                    name: "Security",
+                    to: "/security",
+                },
+                {
+                    name: "Feedback",
+                    to: "/feedback",
+                },
             ],
         },
     ];
@@ -85,11 +119,12 @@ function Footer() {
                                     <li key={idx}>
                                         <button
                                             className="hover:text-secondary transition-colors flex items-center gap-2 group cursor-pointer"
+                                            onClick={() => navigate(item.to)}
                                         >
                                             <span className="group-hover:translate-x-1 transition-transform">
                                                 <FaTerminal className="text-xs opacity-70" />
                                             </span>
-                                            {item}
+                                            {item.name}
                                         </button>
                                     </li>
                                 ))}
@@ -128,14 +163,12 @@ function Footer() {
                     </div>
 
                     <div className="text-base-content/70">
-                        <span>Made with</span>
-                        {" "}
-                        <FaHeart className="inline text-error animate-pulse min-w-5" />
-                        {" "}
+                        <span>Made with</span>{" "}
+                        <FaHeart className="inline text-error animate-pulse min-w-5" />{" "}
                         <span>
                             by{" "}
                             <a
-                                className="link link-warning link-hover font-semibold"
+                                className="link link-error link-hover font-semibold"
                                 href="https://github.com/subhranil002"
                                 target="_blank"
                             >

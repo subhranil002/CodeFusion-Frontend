@@ -24,9 +24,7 @@ function Header() {
     const location = useLocation();
     const { isLoggedIn, role, data } = useSelector((state: any) => state.auth);
     const [theme, setTheme] = useState(
-        typeof window !== "undefined"
-            ? localStorage.getItem("site-theme") || "dark"
-            : "light"
+        localStorage.getItem("site-theme") || "light"
     );
 
     async function handleLogout() {
@@ -314,7 +312,7 @@ function Header() {
                                     }`}
                                 >
                                     <FaUser className="text-lg" />
-                                    Signup
+                                    Sign Up
                                 </Link>
                             </li>
                         </>
