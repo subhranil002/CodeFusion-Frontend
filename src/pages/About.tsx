@@ -1,11 +1,3 @@
-import {
-    FaCode,
-    FaGlobe,
-    FaRocket,
-    FaShieldAlt,
-    FaUsers,
-} from "react-icons/fa";
-
 import Features from "../components/About/Features";
 import Hero from "../components/About/Hero";
 import CTA from "../components/Home/CTA";

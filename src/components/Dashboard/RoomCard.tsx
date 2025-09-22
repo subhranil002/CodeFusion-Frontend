@@ -6,6 +6,7 @@ import {
     FaClock,
     FaCode,
     FaEdit,
+    FaExclamationTriangle,
     FaGlobe,
     FaLink,
     FaLock,
@@ -26,7 +27,8 @@ function RoomCard({ room }: { room: RoomCardData }) {
     const navigate = useNavigate();
     const isOwner = Boolean(room.owner === userData?._id);
     const dispatch: any = useDispatch();
-
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
     const [copied, setCopied] = useState(false);
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [roomName, setRoomName] = useState(room.roomName);
@@ -91,90 +93,168 @@ function RoomCard({ room }: { room: RoomCardData }) {
         setEditModalOpen(false);
     };
 
-    const deleteRoom = async () => {
-        if (window.confirm("Are you sure you want to delete this room?")) {
-            await dispatch(deleteRoomById({ roomId: room.roomId }));
-            dispatch(fetchRooms());
-        }
+    const handleDeleteRoom = async () => {
+        setIsDeleting(true);
+        await dispatch(deleteRoomById({ roomId: room.roomId }));
+        dispatch(fetchRooms());
+        setIsDeleting(false);
+        setDeleteModalOpen(false);
     };
 
     return (
-        <div className="relative">
+        <>
             {/* Edit Room Modal */}
             <div className={`modal ${editModalOpen ? "modal-open" : ""}`}>
-                <div className="modal-box">
-                    <h3 className="font-bold text-lg mb-4">
-                        Edit Room Settings
-                    </h3>
-
-                    <div className="form-control w-full mb-4">
-                        <label className="label">
-                            <span className="label-text">Room Name</span>
-                        </label>
-                        <input
-                            type="text"
-                            placeholder="Enter room name"
-                            className="input input-bordered w-full"
-                            value={roomName}
-                            onChange={(e) => setRoomName(e.target.value)}
-                        />
-                    </div>
-
-                    <div className="form-control mb-6">
-                        <label className="label cursor-pointer justify-start">
-                            <input
-                                type="checkbox"
-                                checked={anyoneCanEdit}
-                                onChange={(e) =>
-                                    setAnyoneCanEdit(e.target.checked)
-                                }
-                                className="checkbox checkbox-primary mr-3"
-                            />
-                            <span className="label-text">Anyone can edit</span>
-                        </label>
-                    </div>
-
-                    <div className="modal-action">
+                <div className="modal-box bg-base-100 shadow-2xl">
+                    <div className="flex items-center justify-between mb-6">
+                        <h3 className="text-2xl font-bold text-base-content">
+                            Edit Room Settings
+                        </h3>
                         <button
-                            className="btn btn-ghost"
+                            onClick={() => setEditModalOpen(false)}
+                            className="btn btn-ghost btn-circle btn-sm"
+                        >
+                            <FaTimes className="w-4 h-4" />
+                        </button>
+                    </div>
+
+                    <div className="space-y-6">
+                        <div className="form-control flex flex-col">
+                            <label className="label mb-2">
+                                <span className="label-text text-lg font-semibold">
+                                    Room Name
+                                </span>
+                            </label>
+                            <input
+                                type="text"
+                                placeholder="Enter room name"
+                                className="input input-bordered input-lg bg-base-200 focus:bg-base-100 transition-colors"
+                                value={roomName}
+                                onChange={(e) => setRoomName(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="form-control">
+                            <label className="label cursor-pointer justify-start p-4 bg-base-200 rounded-lg hover:bg-base-300 transition-colors">
+                                <input
+                                    type="checkbox"
+                                    checked={anyoneCanEdit}
+                                    onChange={(e) =>
+                                        setAnyoneCanEdit(e.target.checked)
+                                    }
+                                    className="checkbox checkbox-primary sm:checkbox-lg mr-4"
+                                />
+                                <div>
+                                    <span className="label-text font-semibold sm:text-lg">
+                                        Anyone can edit
+                                    </span>
+                                    <p className="text-sm text-base-content/70 mt-1 text-wrap">
+                                        Allow other users to edit code in this
+                                        room
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div className="modal-action mt-8">
+                        <button
+                            className="btn btn-outline sm:btn-lg"
                             onClick={() => setEditModalOpen(false)}
                         >
-                            <FaTimes className="w-4 h-4 mr-1" /> Cancel
+                            <FaTimes className="w-4 h-4 mr-2" />
+                            Cancel
                         </button>
                         <button
-                            className="btn btn-primary"
+                            className="btn btn-primary sm:btn-lg"
                             onClick={handleEditRoom}
                         >
-                            <FaCheck className="w-4 h-4 mr-1" /> Save Changes
+                            <FaCheck className="w-4 h-4" />
+                            Save Changes
                         </button>
                     </div>
                 </div>
             </div>
 
-            <div className="card bg-base-100 border border-base-300 hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5">
-                <div className="card-body p-5">
+            {/* Delete Confirmation Modal */}
+            <div className={`modal ${deleteModalOpen ? "modal-open" : ""}`}>
+                <div className="modal-box bg-base-100 shadow-2xl max-w-md">
+                    <div className="flex flex-col items-center text-center">
+                        <div className="p-3 bg-error/10 rounded-full mb-4">
+                            <FaExclamationTriangle className="w-8 h-8 text-error" />
+                        </div>
+
+                        <h3 className="text-2xl font-bold text-base-content mb-2">
+                            Delete Room?
+                        </h3>
+
+                        <p className="text-base-content/70 mb-6">
+                            Are you sure you want to delete{" "}
+                            <strong>"{room.roomName}"</strong>? This action
+                            cannot be undone and all room data will be lost.
+                        </p>
+                    </div>
+
+                    <div className="modal-action flex gap-3">
+                        <button
+                            className="btn btn-outline sm:btn-lg"
+                            onClick={() => setDeleteModalOpen(false)}
+                            disabled={isDeleting}
+                        >
+                            <FaTimes className="w-4 h-4 mr-2" />
+                            Cancel
+                        </button>
+                        <button
+                            className="btn btn-error sm:btn-lg"
+                            onClick={handleDeleteRoom}
+                            disabled={isDeleting}
+                        >
+                            {isDeleting ? (
+                                <>
+                                    <span className="loading loading-spinner loading-sm"></span>
+                                    Deleting...
+                                </>
+                            ) : (
+                                <>
+                                    <FaTrash className="w-4 h-4" />
+                                    Delete Room
+                                </>
+                            )}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Room Card */}
+            <div className="card bg-base-100 shadow-lg hover:shadow-2xl border border-base-300/50 transition-all duration-300 hover:-translate-y-2 group">
+                <div className="card-body p-6">
                     {/* Header Section */}
-                    <div className="flex flex-col sm:flex-row justify-between items-start gap-3 mb-4">
+                    <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-4">
                         <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-2 flex-wrap">
-                                <h3 className="text-xl font-bold text-base-content truncate">
-                                    {room.roomName}
-                                </h3>
-                                <span className="badge badge-outline text-xs py-1.5 px-2">
-                                    {room.roomId}
-                                </span>
+                            <div className="flex items-center gap-3 mb-3">
+                                <div className="p-2 bg-primary/10 rounded-lg">
+                                    <FaCode className="w-5 h-5 text-primary" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <h3 className="text-xl font-bold text-base-content truncate group-hover:text-primary transition-colors">
+                                        {room.roomName}
+                                    </h3>
+                                    <p className="text-sm text-base-content/60 font-mono truncate">
+                                        ID: {room.roomId}
+                                    </p>
+                                </div>
                             </div>
 
                             <div className="flex gap-2">
-                                <span className="badge badge-primary gap-1.5">
+                                <div className="badge badge-primary badge-lg gap-2 py-3 px-3">
                                     <FaCode className="w-3 h-3" />
                                     {(
                                         room.language.name || "Unknown"
                                     ).toUpperCase()}
-                                </span>
+                                </div>
 
-                                <span
-                                    className={`badge gap-1.5 ${
+                                <div
+                                    className={`badge badge-lg gap-2 py-3 px-3 ${
                                         room.anyoneCanEdit
                                             ? "badge-success"
                                             : "badge-warning"
@@ -191,17 +271,17 @@ function RoomCard({ room }: { room: RoomCardData }) {
                                             Private
                                         </>
                                     )}
-                                </span>
+                                </div>
                             </div>
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="flex items-center gap-1 self-end sm:self-auto">
+                        <div className="flex items-center gap-2 self-start sm:self-auto">
                             <button
-                                className={`btn btn-ghost btn-square btn-sm transition-all duration-300 ${
+                                className={`btn btn-circle btn-sm transition-all duration-300 ${
                                     copied
-                                        ? "btn-success text-success-content"
-                                        : "text-info hover:bg-info/20"
+                                        ? "btn-success"
+                                        : "btn-ghost hover:bg-info/20 text-info"
                                 }`}
                                 title={copied ? "Copied!" : "Copy link"}
                                 onClick={copyLink}
@@ -216,18 +296,18 @@ function RoomCard({ room }: { room: RoomCardData }) {
 
                             {isOwner && (
                                 <button
-                                    className="btn btn-ghost btn-square btn-sm text-warning hover:bg-warning/20"
+                                    className="btn btn-circle btn-sm btn-ghost hover:bg-warning/20 text-warning"
                                     title="Edit room"
                                     onClick={() => setEditModalOpen(true)}
                                 >
                                     <FaEdit className="w-4 h-4" />
                                 </button>
                             )}
-                            
+
                             <button
-                                className="btn btn-ghost btn-square btn-sm text-error hover:bg-error/20"
+                                className="btn btn-circle btn-sm btn-ghost hover:bg-error/20 text-error"
                                 title="Delete room"
-                                onClick={deleteRoom}
+                                onClick={() => setDeleteModalOpen(true)}
                             >
                                 <FaTrash className="w-4 h-4" />
                             </button>
@@ -235,40 +315,50 @@ function RoomCard({ room }: { room: RoomCardData }) {
                     </div>
 
                     {/* Info Section */}
-                    <div className="space-y-3 text-sm text-base-content/70 mb-5">
-                        <div className="flex items-center gap-3">
-                            <div className="flex items-center gap-2 flex-1">
-                                <FaClock className="w-4 h-4 text-primary" />
-                                <span
+                    <div className="space-y-3 mb-6">
+                        <div className="flex items-center gap-3 p-3 bg-base-200 rounded-lg">
+                            <FaClock className="w-4 h-4 text-primary flex-shrink-0" />
+                            <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-base-content">
+                                    Last active
+                                </p>
+                                <p
+                                    className="text-sm text-base-content/70 truncate"
                                     title={formatDateIST(room.updatedAt)}
-                                    className="truncate"
                                 >
-                                    Last active {formatTimeAgo(room.updatedAt)}
-                                </span>
+                                    {formatTimeAgo(room.updatedAt)}
+                                </p>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-3">
-                            <div className="flex items-center gap-2 flex-1">
-                                <FaCalendar className="w-4 h-4 text-secondary" />
-                                <span className="truncate">
-                                    Created {formatDateIST(room.createdAt)}
-                                </span>
+                        <div className="flex items-center gap-3 p-3 bg-base-200 rounded-lg">
+                            <FaCalendar className="w-4 h-4 text-secondary flex-shrink-0" />
+                            <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-base-content">
+                                    Created
+                                </p>
+                                <p className="text-sm text-base-content/70 truncate">
+                                    {formatDateIST(room.createdAt)}
+                                </p>
                             </div>
                         </div>
                     </div>
 
                     {/* Join Button */}
-                    <button
-                        className="btn btn-primary w-full mt-auto group"
-                        onClick={() => navigate(`/playground/${room.roomId}`)}
-                    >
-                        <FaCode className="w-4 h-4 mr-2 transition-transform group-hover:scale-110" />
-                        Join Room
-                    </button>
+                    <div className="card-actions">
+                        <button
+                            className="btn btn-primary w-full gap-2 group/btn hover:scale-105 transition-transform duration-300"
+                            onClick={() =>
+                                navigate(`/playground/${room.roomId}`)
+                            }
+                        >
+                            <FaCode className="w-4 h-4 transition-transform group-hover/btn:scale-110" />
+                            Join Room
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 
