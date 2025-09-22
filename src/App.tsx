@@ -10,6 +10,11 @@ function App() {
         window.scrollTo(0, 0);
     }, [location.pathname]);
 
+    useEffect(() => {
+        const theme = localStorage.getItem("site-theme") || "light";
+        document.documentElement.setAttribute("data-theme", theme);
+    }, []);
+
     return <Router />;
 }
 

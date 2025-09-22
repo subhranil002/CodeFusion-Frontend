@@ -1,109 +1,183 @@
-import { useNavigate } from "react-router-dom";
+import {
+    FaCode,
+    FaHome,
+    FaSearch,
+} from "react-icons/fa";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+
+import HomeLayout from "../layouts/HomeLayout";
 
 function NotFound() {
-    const navigate = useNavigate();
+    const { isLoggedIn } = useSelector((state: any) => state.auth);
 
     return (
-        <div className="bg-base-900 text-base-content h-screen flex flex-col justify-center items-center">
-            <div className="animate-bounce">
-                <svg
-                    enableBackground="new 0 0 226 249.135"
-                    viewBox="0 0 226 249.135"
-                    className="w-56 h-56"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    <circle cx="113" cy="113" r="109" fill="#FFE585" />
-                    <line
-                        x1="88.866"
-                        y1="245.135"
-                        x2="136.866"
-                        y2="245.135"
-                        stroke="#6E6E96"
-                        strokeWidth="8"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        opacity="0.29"
-                    />
-                    <line
-                        x1="154.732"
-                        y1="245.135"
-                        x2="168.732"
-                        y2="245.135"
-                        stroke="#6E6E96"
-                        strokeWidth="8"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        opacity="0.17"
-                    />
-                    <line
-                        x1="69.732"
-                        y1="245.135"
-                        x2="58.732"
-                        y2="245.135"
-                        stroke="#6E6E96"
-                        strokeWidth="8"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        opacity="0.17"
-                    />
-                    <circle cx="68.732" cy="93" r="9" fill="#6E6E96" />
-                    <circle cx="156.398" cy="93" r="9" fill="#6E6E96" />
-                    <ellipse
-                        cx="67.732"
-                        cy="140.894"
-                        rx="17.372"
-                        ry="8.106"
-                        fill="#FF0000"
-                        opacity="0.18"
-                    />
-                    <ellipse
-                        cx="154.88"
-                        cy="140.894"
-                        rx="17.371"
-                        ry="8.106"
-                        fill="#FF0000"
-                        opacity="0.18"
-                    />
-                    <path
-                        d="M13,118.5C13,61.338,59.338,15,116.5,15c55.922,0,101.477,44.353,103.427,99.797
-            c0.044-1.261,0.073-2.525,0.073-3.797C220,50.802,171.199,2,111,2S2,50.802,2,111c0,50.111,33.818,92.318,79.876,105.06
-            C41.743,201.814,13,163.518,13,118.5z"
-                        fill="#FFEFB5"
-                    />
-                    <path
-                        d="M115.568,5.947c-1.026,0-2.049,0.017-3.069,0.045
-            c54.425,1.551,98.069,46.155,98.069,100.955c0,55.781-45.219,101-101,101c-55.781,0-101-45.219-101-101
-            c0-8.786,1.124-17.309,3.232-25.436c-3.393,10.536-5.232,21.771-5.232,33.436c0,60.199,48.801,109,109,109s109-48.801,109-109
-            S175.768,5.947,115.568,5.947z"
-                        opacity="0.24"
-                        fill="#FF9900"
-                    />
-                    <circle
-                        cx="113"
-                        cy="113"
-                        r="109"
-                        fill="none"
-                        stroke="#6E6E96"
-                        strokeWidth="8"
-                    />
-                </svg>
-            </div>
+        <HomeLayout>
+            <div className="min-h-screen bg-gradient-to-br from-base-100 via-base-100 to-primary/10 flex items-center justify-center py-12 px-4">
+                <div className="max-w-4xl mx-auto text-center">
+                    {/* Animated 404 Display */}
+                    <div className="mb-8 relative">
+                        <div className="text-9xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent relative">
+                            4
+                            <span className="inline-block animate-bounce">
+                                <FaCode className="inline text-7xl text-warning mx-2" />
+                            </span>
+                            4
+                        </div>
+                    </div>
 
-            <div className="text-center tracking-widest mt-6">
-                <h1 className="text-6xl mb-2">404</h1>
-                <p className="text-xl">
-                    Sorry, we couldn't find what you are looking for!
-                </p>
-            </div>
+                    {/* Error Message */}
+                    <div className="card bg-base-100 shadow-2xl border border-base-300 max-w-2xl mx-auto mb-8">
+                        <div className="card-body p-8">
+                            <h1 className="card-title text-3xl font-bold justify-center text-error mb-2">
+                                Page Not Found
+                            </h1>
+                            <p className="text-lg text-base-content/80 mb-6">
+                                Oops! The page you're looking for seems to have
+                                vanished into the digital void.
+                            </p>
 
-            <button
-                className="btn btn-outline btn-accent mt-8"
-                onClick={() => navigate("/")}
-            >
-                Go To Home
-            </button>
-        </div>
+                            <div className="bg-base-200 rounded-lg p-4 mb-6 text-left">
+                                <div className="font-mono text-sm">
+                                    <div className="flex">
+                                        <span className="text-base-content/50 w-8">
+                                            1
+                                        </span>
+                                        <span className="text-error">
+                                            // Error: 404 - Route not found
+                                        </span>
+                                    </div>
+                                    <div className="flex">
+                                        <span className="text-base-content/50 w-8">
+                                            2
+                                        </span>
+                                        <span className="text-warning">
+                                            if (page.exists()) {"{"}
+                                        </span>
+                                    </div>
+                                    <div className="flex">
+                                        <span className="text-base-content/50 w-8">
+                                            3
+                                        </span>
+                                        <span className="text-success ml-4">
+                                            renderPage();
+                                        </span>
+                                    </div>
+                                    <div className="flex">
+                                        <span className="text-base-content/50 w-8">
+                                            4
+                                        </span>
+                                        <span className="text-warning">
+                                            {"}"} else {"{"}
+                                        </span>
+                                    </div>
+                                    <div className="flex">
+                                        <span className="text-base-content/50 w-8">
+                                            5
+                                        </span>
+                                        <span className="text-error ml-4">
+                                            show404();
+                                        </span>
+                                    </div>
+                                    <div className="flex">
+                                        <span className="text-base-content/50 w-8">
+                                            6
+                                        </span>
+                                        <span className="text-warning">
+                                            {"}"}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p className="text-base-content/70 mb-8">
+                                The URL might be incorrect, or the page may have
+                                been moved. Let's get you back to coding!
+                            </p>
+
+                            {/* Action Buttons */}
+                            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                                <Link
+                                    to="/"
+                                    className="btn btn-primary btn-lg gap-2"
+                                >
+                                    <FaHome className="text-lg" />
+                                    Back to Home
+                                </Link>
+                                {isLoggedIn && (
+                                    <Link
+                                        to="/dashboard"
+                                        className="btn btn-outline btn-lg gap-2"
+                                    >
+                                        <FaCode className="text-lg" />
+                                        Go to Dashboard
+                                    </Link>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Helpful Suggestions */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
+                        <div className="card bg-base-100 shadow-md border border-base-300">
+                            <div className="card-body p-6 text-center">
+                                <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <FaSearch className="text-xl text-primary" />
+                                </div>
+                                <h3 className="font-semibold mb-2">
+                                    Check the URL
+                                </h3>
+                                <p className="text-sm text-base-content/70">
+                                    Make sure the web address is spelled
+                                    correctly.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="card bg-base-100 shadow-md border border-base-300">
+                            <div className="card-body p-6 text-center">
+                                <div className="bg-secondary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <FaHome className="text-xl text-secondary" />
+                                </div>
+                                <h3 className="font-semibold mb-2">
+                                    Navigate from Home
+                                </h3>
+                                <p className="text-sm text-base-content/70">
+                                    Use the main navigation to find what you
+                                    need.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="card bg-base-100 shadow-md border border-base-300">
+                            <div className="card-body p-6 text-center">
+                                <div className="bg-accent/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <FaCode className="text-xl text-accent" />
+                                </div>
+                                <h3 className="font-semibold mb-2">
+                                    Get Coding
+                                </h3>
+                                <p className="text-sm text-base-content/70">
+                                    Return to your dashboard and start
+                                    collaborating.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Support Link */}
+                    <div className="mt-8 text-base-content/60">
+                        <p>
+                            Still having trouble?{" "}
+                            <Link to="/contact" className="link link-primary">
+                                Contact our support team
+                            </Link>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </HomeLayout>
     );
-};
+}
 
 export default NotFound;
