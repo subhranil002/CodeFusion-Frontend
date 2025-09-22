@@ -33,18 +33,20 @@ function Testimonials() {
     ];
 
     return (
-        <section className="py-16 md:py-24 bg-gradient-to-br from-base-100 to-base-200">
+        <section className="py-16 bg-gradient-to-br from-base-100 to-base-200">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-16">
                     <div className="badge badge-primary badge-outline badge-lg mb-4">
                         TESTIMONIALS
                     </div>
                     <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
-                        Loved by Developers
+                        What
                         <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                             {" "}
-                            Worldwide
+                            Developers
+                            {" "}
                         </span>
+                        Say
                     </h2>
                     <p className="text-lg text-base-content/80 max-w-2xl mx-auto">
                         Discover why thousands of developers choose CodeFusion

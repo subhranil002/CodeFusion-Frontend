@@ -100,7 +100,7 @@ function Features() {
                         projects together.
                     </p>
                     <button
-                        className="btn btn-primary btn-lg gap-2"
+                        className="btn btn-warning btn-lg gap-2"
                         onClick={() => navigate("/dashboard")}
                     >
                         Get Started Free

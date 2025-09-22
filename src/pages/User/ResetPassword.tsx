@@ -1,119 +1,206 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { FiLock } from "react-icons/fi";
+import {
+    FiEye,
+    FiEyeOff,
+    FiLock,
+} from "react-icons/fi";
+import { useNavigate, useParams } from "react-router-dom";
 
-type ResetPasswordFormValues = {
+interface ResetPasswordForm {
     newPassword: string;
     confirmPassword: string;
-};
+}
 
 function ResetPassword() {
+    const { token } = useParams();
+    const navigate = useNavigate();
+
+    const [showPasswords, setShowPasswords] = useState({
+        new: false,
+        confirm: false,
+    });
+    const [isLoading, setIsLoading] = useState(false);
+
+    const passwordPattern =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]+$/;
+
     const {
         register,
         handleSubmit,
         watch,
-        reset,
-        formState: { errors, isSubmitting },
-    } = useForm<ResetPasswordFormValues>();
+        formState: { errors },
+    } = useForm<ResetPasswordForm>({
+        mode: "onSubmit",
+    });
 
-    const onSubmit = async (data: ResetPasswordFormValues) => {
-        console.log("Reset password request:", data);
+    const newPassword = watch("newPassword");
 
-        // Example: API call
-        // await api.resetPassword({ newPassword: data.newPassword });
+    const togglePasswordVisibility = (field: keyof typeof showPasswords) => {
+        setShowPasswords((prev) => ({ ...prev, [field]: !prev[field] }));
+    };
 
-        reset();
+    const onSubmit = async (data: ResetPasswordForm) => {
+        try {
+            setIsLoading(true);
+            await new Promise((resolve) => setTimeout(resolve, 1400));
+            console.log("Reset password request", { token, ...data });
+            setIsLoading(false);
+            setTimeout(() => {
+                navigate("/signin");
+            }, 1400);
+        } catch (err) {
+            console.error("Failed to reset password:", err);
+            setIsLoading(false);
+        }
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20 flex items-center justify-center">
-            <div className="card glass-card w-full max-w-md">
-                <div className="card-body p-6">
-                    <h2 className="text-2xl font-bold text-center mb-4">
-                        Reset Password
-                    </h2>
-                    <p className="text-muted-foreground text-center mb-6">
-                        Enter your new password below
-                    </p>
-
-                    <form
-                        onSubmit={handleSubmit(onSubmit)}
-                        className="space-y-4"
-                    >
-                        {/* New Password */}
-                        <div className="space-y-2">
-                            <label htmlFor="newPassword" className="label">
-                                <span className="label-text">New Password</span>
-                            </label>
-                            <input
-                                id="newPassword"
-                                type="password"
-                                className="input input-bordered w-full"
-                                {...register("newPassword", {
-                                    required: "New password is required",
-                                    minLength: {
-                                        value: 8,
-                                        message:
-                                            "New password must be at least 8 characters",
-                                    },
-                                    pattern: {
-                                        value: /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]+$/,
-                                        message:
-                                            "Must contain uppercase, number, and special character",
-                                    },
-                                })}
-                                placeholder="Enter new password"
-                            />
-                            {errors.newPassword && (
-                                <p className="text-red-500 text-sm">
-                                    {errors.newPassword.message}
-                                </p>
-                            )}
+        <div className="min-h-screen bg-gradient-to-br from-base-100 via-base-200 to-primary/10 pt-40 px-4">
+            <div className="max-w-md mx-auto">
+                <div className="card bg-base-100 shadow-xl border border-base-300/50">
+                    <div className="card-body p-6">
+                        <div className="text-center mb-6">
+                            <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <FiLock className="text-warning w-6 h-6" />
+                            </div>
+                            <h2 className="text-2xl font-bold text-warning">
+                                Create your new password
+                            </h2>
+                            <p className="text-base-content/70 mt-1">
+                                Enter a strong password to secure your account
+                            </p>
                         </div>
 
-                        {/* Confirm Password */}
-                        <div className="space-y-2">
-                            <label htmlFor="confirmPassword" className="label">
-                                <span className="label-text">
-                                    Confirm Password
-                                </span>
-                            </label>
-                            <input
-                                id="confirmPassword"
-                                type="password"
-                                className="input input-bordered w-full"
-                                {...register("confirmPassword", {
-                                    minLength: {
-                                        value: 8,
-                                        message:
-                                            "Confirm password must be at least 8 characters",
-                                    },
-                                    pattern: {
-                                        value: /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]+$/,
-                                        message:
-                                            "Must contain uppercase, number, and special character",
-                                    },
-                                    validate: (value) =>
-                                        value === watch("newPassword") ||
-                                        "Passwords do not match",
-                                })}
-                                placeholder="Confirm new password"
-                            />
-                            {errors.confirmPassword && (
-                                <p className="text-red-500 text-sm">
-                                    {errors.confirmPassword.message}
-                                </p>
-                            )}
-                        </div>
-
-                        <button
-                            type="submit"
-                            className="btn w-full"
-                            disabled={isSubmitting}
+                        <form
+                            onSubmit={handleSubmit(onSubmit)}
+                            className="space-y-4"
                         >
-                            <FiLock className="mr-2 h-4 w-4" />
-                            {isSubmitting ? "Resetting..." : "Reset Password"}
-                        </button>
-                    </form>
+                            <div className="form-control">
+                                <label className="label">
+                                    <span className="label-text font-semibold">
+                                        New Password
+                                    </span>
+                                </label>
+                                <div className="relative">
+                                    <input
+                                        type={
+                                            showPasswords.new
+                                                ? "text"
+                                                : "password"
+                                        }
+                                        placeholder="Enter new password"
+                                        className={`input input-bordered w-full pr-12 ${
+                                            errors.newPassword
+                                                ? "input-error"
+                                                : ""
+                                        }`}
+                                        {...register("newPassword", {
+                                            required:
+                                                "New password is required",
+                                            minLength: {
+                                                value: 8,
+                                                message:
+                                                    "Password must be at least 8 characters",
+                                            },
+                                            pattern: {
+                                                value: passwordPattern,
+                                                message:
+                                                    "Must contain uppercase, lowercase, number, and special character",
+                                            },
+                                        })}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="absolute right-3 top-3 text-base-content/70 hover:text-base-content z-10"
+                                        onClick={() =>
+                                            togglePasswordVisibility("new")
+                                        }
+                                        aria-label="Toggle new password visibility"
+                                    >
+                                        {showPasswords.new ? (
+                                            <FiEyeOff size={18} />
+                                        ) : (
+                                            <FiEye size={18} />
+                                        )}
+                                    </button>
+                                </div>
+                                {errors.newPassword && (
+                                    <label className="label">
+                                        <span className="label-text-alt text-error text-wrap">
+                                            {errors.newPassword.message}
+                                        </span>
+                                    </label>
+                                )}
+                            </div>
+
+                            <div className="form-control">
+                                <label className="label">
+                                    <span className="label-text font-semibold">
+                                        Confirm Password
+                                    </span>
+                                </label>
+                                <div className="relative">
+                                    <input
+                                        type={
+                                            showPasswords.confirm
+                                                ? "text"
+                                                : "password"
+                                        }
+                                        placeholder="Confirm new password"
+                                        className={`input input-bordered w-full pr-12 ${
+                                            errors.confirmPassword
+                                                ? "input-error"
+                                                : ""
+                                        }`}
+                                        {...register("confirmPassword", {
+                                            required:
+                                                "Please confirm your password",
+                                            validate: (value) =>
+                                                value === newPassword ||
+                                                "Passwords do not match",
+                                        })}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="absolute right-3 top-3 text-base-content/70 hover:text-base-content z-10"
+                                        onClick={() =>
+                                            togglePasswordVisibility("confirm")
+                                        }
+                                        aria-label="Toggle confirm password visibility"
+                                    >
+                                        {showPasswords.confirm ? (
+                                            <FiEyeOff size={18} />
+                                        ) : (
+                                            <FiEye size={18} />
+                                        )}
+                                    </button>
+                                </div>
+                                {errors.confirmPassword && (
+                                    <label className="label">
+                                        <span className="label-text-alt text-error text-wrap">
+                                            {errors.confirmPassword.message}
+                                        </span>
+                                    </label>
+                                )}
+                            </div>
+
+                            <button
+                                type="submit"
+                                className="btn btn-warning w-full gap-2"
+                                disabled={isLoading}
+                            >
+                                {isLoading ? (
+                                    <span className="loading loading-spinner"></span>
+                                ) : (
+                                    <>
+                                        <FiLock className="w-4 h-4" />
+                                        Reset Password
+                                    </>
+                                )}
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

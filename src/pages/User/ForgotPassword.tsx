@@ -1,72 +1,96 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FiMail } from "react-icons/fi";
 
-type ForgotPasswordFormValues = {
+interface ForgotPasswordForm {
     email: string;
-};
+}
 
 function ForgotPassword() {
+    const [isLoading, setIsLoading] = useState(false);
+
     const {
         register,
         handleSubmit,
-        reset,
-        formState: { errors, isSubmitting },
-    } = useForm<ForgotPasswordFormValues>();
+        formState: { errors },
+    } = useForm<ForgotPasswordForm>({
+        mode: "onSubmit",
+    });
 
-    const onSubmit = async (data: ForgotPasswordFormValues) => {
-        console.log("Forgot password request:", data);
-        reset();
+    const onSubmit = async (data: ForgotPasswordForm) => {
+        try {
+            setIsLoading(true);
+            await new Promise((resolve) => setTimeout(resolve, 1300));
+            console.log("Password reset requested for:", data.email);
+            setIsLoading(false);
+        } catch (err) {
+            console.error("Failed to request password reset:", err);
+            setIsLoading(false);
+        }
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20 flex items-center justify-center">
-            <div className="card glass-card w-full max-w-md">
-                <div className="card-body p-6">
-                    <h2 className="text-2xl font-bold text-center mb-4">
-                        Forgot Password
-                    </h2>
-                    <p className="text-muted-foreground text-center mb-6">
-                        Enter your email to receive a reset link
-                    </p>
+        <div className="min-h-screen bg-gradient-to-br from-base-100 via-base-200 to-primary/10 pt-40 px-4">
+            <div className="max-w-md mx-auto">
+                <div className="card bg-base-100 shadow-xl border border-base-300/50 p-5">
+                    <div className="text-center mb-6">
+                        <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <FiMail className="text-warning w-6 h-6" />
+                        </div>
+                        <h2 className="text-2xl font-bold text-warning">
+                            Forgot Password
+                        </h2>
+                        <p className="text-base-content/70 mt-1">
+                            Enter your email to receive a reset link
+                        </p>
+                    </div>
 
                     <form
                         onSubmit={handleSubmit(onSubmit)}
                         className="space-y-4"
                     >
-                        {/* Email Field */}
-                        <div className="space-y-2">
-                            <label htmlFor="email" className="label">
-                                <span className="label-text">
+                        <div className="form-control">
+                            <label className="label mb-2">
+                                <span className="label-text font-semibold">
                                     Email Address
                                 </span>
                             </label>
                             <input
-                                id="email"
                                 type="email"
-                                className="input input-bordered w-full"
+                                placeholder="Enter your email"
+                                className={`input input-bordered w-full ${
+                                    errors.email ? "input-error" : ""
+                                }`}
                                 {...register("email", {
                                     required: "Email is required",
                                     pattern: {
-                                        value: /^(?=.{1,254}$)(?=.{1,64}@)[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/,
-                                        message: "Invalid email format",
+                                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                        message: "Invalid email address",
                                     },
                                 })}
-                                placeholder="Enter your email"
                             />
                             {errors.email && (
-                                <p className="text-red-500 text-sm">
-                                    {errors.email.message}
-                                </p>
+                                <label className="label">
+                                    <span className="label-text-alt text-error">
+                                        {errors.email.message}
+                                    </span>
+                                </label>
                             )}
                         </div>
 
                         <button
                             type="submit"
-                            className="btn w-full"
-                            disabled={isSubmitting}
+                            className="btn btn-warning w-full gap-2"
+                            disabled={isLoading}
                         >
-                            <FiMail className="mr-2 h-4 w-4" />
-                            {isSubmitting ? "Sending..." : "Send Reset Link"}
+                            {isLoading ? (
+                                <span className="loading loading-spinner"></span>
+                            ) : (
+                                <>
+                                    <FiMail className="w-4 h-4" />
+                                    Send Reset Link
+                                </>
+                            )}
                         </button>
                     </form>
                 </div>
