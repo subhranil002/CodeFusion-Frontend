@@ -22,6 +22,7 @@ function EditorHeader({ writeLock, fontSize, setFontSize }: any) {
     const [runCode, setRunCode] = useState(false);
     const [userInputValue, setUserInputValue] = useState("");
     const dispatch: any = useDispatch();
+    const isOwner = Boolean(owner === user?._id);
 
     const handleCodeRun = () => {
         setRunCode(true);
@@ -52,11 +53,11 @@ function EditorHeader({ writeLock, fontSize, setFontSize }: any) {
                 setUserInputValue={setUserInputValue}
                 runCode={handleCodeRun}
             />
-            <div className="flex flex-wrap items-center justify-between pb-3 bg-base-200 border-b border-base-300 gap-2">
+            <div className="flex flex-wrap items-center justify-between pb-3 border-b border-base-300 gap-2">
                 {/* Left Section */}
                 <div className="flex flex-wrap items-center gap-3">
                     {/* Language Selector */}
-                    <button className="btn btn-sm btn-outline rounded-tl-xl flex items-center gap-2 h-8">
+                    <button className="badge badge-sm badge-neutral flex items-center gap-2 h-8 font-bold">
                         <span>{languageName.toUpperCase()}</span>
                     </button>
 
@@ -81,8 +82,6 @@ function EditorHeader({ writeLock, fontSize, setFontSize }: any) {
                                         <a
                                             onClick={() => {
                                                 setFontSize(size);
-                                                // @ts-expect-error hehe
-                                                document.activeElement?.blur();
                                             }}
                                         >
                                             {size}px
@@ -96,18 +95,14 @@ function EditorHeader({ writeLock, fontSize, setFontSize }: any) {
                     {/* Write Lock */}
                     <span
                         className={`badge h-8 ${
-                            owner === user?._id || !writeLock
+                            isOwner || !writeLock
                                 ? "badge-success"
                                 : "badge-error"
                         }`}
                     >
-                        {owner === user?._id || !writeLock ? (
-                            <FaLockOpen />
-                        ) : (
-                            <FaLock />
-                        )}
+                        {isOwner || !writeLock ? <FaLockOpen /> : <FaLock />}
                         <span className="font-semibold">
-                            {owner === user?._id
+                            {isOwner
                                 ? "Owner"
                                 : writeLock
                                 ? "View Only"
@@ -119,9 +114,11 @@ function EditorHeader({ writeLock, fontSize, setFontSize }: any) {
                     <button
                         className="btn btn-sm btn-error"
                         onClick={() => saveCodeToCloud()}
-                        disabled={owner !== user?._id}
+                        disabled={!isOwner}
                     >
-                        Save Code
+                        {isOwner
+                                ? "Save Code"
+                                : "Owner only can save code"}
                     </button>
                 </div>
 

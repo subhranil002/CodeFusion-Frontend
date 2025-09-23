@@ -10,7 +10,6 @@ import Terminal from "../../components/CodePlayground/Terminal";
 import editorSocket from "../../configs/EditorSocketConfig";
 import { joinRoomById, resetRoomState } from "../../redux/slices/RoomSlice";
 
-
 function CodePlayground() {
     const [fontSize, setFontSize] = useState(18);
     const { roomId } = useParams();
@@ -47,6 +46,10 @@ function CodePlayground() {
             });
         }
 
+        editorSocket.on("roomUpdateTrigger", () => {
+            window.location.reload();
+        });
+
         editorSocket.on("IAMKICKED", () => {
             dispatch(resetRoomState());
             navigate("/dashboard");
@@ -55,6 +58,7 @@ function CodePlayground() {
 
         return () => {
             editorSocket.off("uniqueUser");
+            editorSocket.off("roomUpdateTrigger");
             editorSocket.off("IAMKICKED");
         };
     }, []);
@@ -69,12 +73,12 @@ function CodePlayground() {
 
     return (
         <Sidebar>
-            <div className="min-h-screen bg-base-200">
+            <div className="h-screen overflow-hidden">
                 {/* Main Content */}
-                <div className="drawer-content flex flex-col h-screen">
+                <div className="flex flex-col h-screen">
                     {/* Editor Area */}
                     <div className="flex-1 p-3 md:p-5">
-                        <div className="bg-base-100 rounded-xl shadow-lg overflow-hidden flex flex-col h-full md:max-h-[95vh]">
+                        <div className="shadow-lg flex flex-col h-full">
                             {/* Editor Header */}
                             <EditorHeader
                                 writeLock={writeLock()}

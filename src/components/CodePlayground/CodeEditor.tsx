@@ -69,9 +69,6 @@ function CodeEditor({ options }: any) {
                 wordWrap: "on",
                 fontFamily: "monospace",
                 quickSuggestions: true,
-                formatOnType: true,
-                formatOnPaste: true,
-                automaticLayout: true,
                 minimap: {
                     enabled: false,
                 },

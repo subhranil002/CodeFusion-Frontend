@@ -4,7 +4,7 @@ function UserInput({ userInputValue, setUserInputValue, runCode }: any) {
             <div className="modal-box">
                 <h3 className="font-bold text-lg mb-4">User Input :</h3>
                 <textarea
-                    placeholder="Enter your input here..."
+                    placeholder="For multiple inputs, use a new line"
                     className="textarea textarea-info w-full resize-none"
                     value={userInputValue}
                     onChange={(e) => setUserInputValue(e.target.value)}

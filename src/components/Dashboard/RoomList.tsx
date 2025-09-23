@@ -237,7 +237,7 @@ function RoomList() {
 
             {/* Room Grid */}
             {sortedRooms.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mx-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mx-4 min-w-[90vw]">
                     {sortedRooms.map((room: RoomCardData) => (
                         <RoomCard key={room.roomId} room={room} />
                     ))}

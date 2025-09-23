@@ -276,7 +276,7 @@ function RoomCard({ room }: { room: RoomCardData }) {
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="flex items-center gap-2 self-start sm:self-auto">
+                        <div className="flex items-center gap-2 self-auto">
                             <button
                                 className={`btn btn-circle btn-sm transition-all duration-300 ${
                                     copied
