@@ -1,15 +1,11 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FiArrowLeft, FiEye, FiEyeOff, FiLock } from "react-icons/fi";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 
 import HomeLayout from "../../layouts/HomeLayout";
-
-interface ChangePasswordForm {
-    oldPassword: string;
-    newPassword: string;
-    confirmPassword: string;
-}
+import { changePassword } from "../../redux/slices/AuthSlice";
 
 function ChangePassword() {
     const navigate = useNavigate();
@@ -19,17 +15,16 @@ function ChangePassword() {
         confirm: false,
     });
     const [isLoading, setIsLoading] = useState(false);
-
     const {
         register,
         handleSubmit,
         watch,
         formState: { errors },
-    } = useForm<ChangePasswordForm>({
+    } = useForm({
         mode: "onSubmit",
     });
-
     const newPassword = watch("newPassword");
+    const dispatch: any = useDispatch();
 
     const togglePasswordVisibility = (field: keyof typeof showPasswords) => {
         setShowPasswords((prev) => ({
@@ -41,24 +36,13 @@ function ChangePassword() {
     const passwordPattern =
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]+$/;
 
-    const onSubmit = async (data: ChangePasswordForm) => {
+    const onSubmit = async (data: any) => {
         if (data.oldPassword === data.newPassword) return;
-
-        try {
-            setIsLoading(true);
-            // simulate API call
-            await new Promise((resolve) => setTimeout(resolve, 1300));
-            // TODO: call your real API here (e.g. dispatch action)
-            console.log("Password change requested", data);
-            setIsLoading(false);
-
-            // keep short delay to show success state, then navigate
-            setTimeout(() => {
-                navigate("/profile");
-            }, 1400);
-        } catch (err) {
-            console.error("Failed to change password:", err);
-            setIsLoading(false);
+        setIsLoading(true);
+        const res = await dispatch(changePassword(data));
+        setIsLoading(false);
+        if (res.payload.success) {
+            navigate("/profile");
         }
     };
 
@@ -135,7 +119,10 @@ function ChangePassword() {
                                     {errors.oldPassword && (
                                         <label className="label">
                                             <span className="label-text-alt text-error text-wrap">
-                                                {errors.oldPassword.message}
+                                                {
+                                                    errors.oldPassword
+                                                        .message as string
+                                                }
                                             </span>
                                         </label>
                                     )}
@@ -197,7 +184,10 @@ function ChangePassword() {
                                     {errors.newPassword && (
                                         <label className="label">
                                             <span className="label-text-alt text-error text-wrap">
-                                                {errors.newPassword.message}
+                                                {
+                                                    errors.newPassword
+                                                        .message as string
+                                                }
                                             </span>
                                         </label>
                                     )}
@@ -250,7 +240,10 @@ function ChangePassword() {
                                     {errors.confirmPassword && (
                                         <label className="label">
                                             <span className="label-text-alt text-error text-wrap">
-                                                {errors.confirmPassword.message}
+                                                {
+                                                    errors.confirmPassword
+                                                        .message as string
+                                                }
                                             </span>
                                         </label>
                                     )}

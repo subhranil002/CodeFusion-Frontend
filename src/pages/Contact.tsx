@@ -8,14 +8,15 @@ import {
     FiPhone,
     FiSend,
 } from "react-icons/fi";
+import { useDispatch } from "react-redux";
 
 import MapLeaflet from "../components/Contact/MapLeaflet";
 import HomeLayout from "../layouts/HomeLayout";
+import { contactUs } from "../redux/slices/AuthSlice";
 
 type FormData = {
     name: string;
     email: string;
-    subject: string;
     message: string;
 };
 
@@ -29,23 +30,17 @@ function ContactUs() {
         defaultValues: {
             name: "",
             email: "",
-            subject: "",
             message: "",
         },
     });
     const [loading, setLoading] = useState(false);
+    const dispatch: any = useDispatch();
 
-    const onSubmit = async (data: FormData) => {
+    const onSubmit = async (data: any) => {
         setLoading(true);
-        await new Promise<void>((resolve) =>
-            setTimeout(() => {
-                resolve();
-            }, 1500)
-        );
-        console.log(data);
+        await dispatch(contactUs(data));
         reset();
         setLoading(false);
-        alert("Message sent successfully. Thank you!");
     };
 
     return (
@@ -55,8 +50,7 @@ function ContactUs() {
                     {/* Header Section */}
                     <div className="text-center mb-12">
                         <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                            Get in
-                            {" "}
+                            Get in{" "}
                             <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                                 Touch
                             </span>
@@ -151,41 +145,6 @@ function ContactUs() {
                                         {errors.email && (
                                             <span className="label-text-alt text-error mt-1">
                                                 {errors.email.message}
-                                            </span>
-                                        )}
-                                    </div>
-
-                                    {/* Subject */}
-                                    <div className="form-control flex flex-col">
-                                        <label
-                                            htmlFor="subject"
-                                            className="label mb-2"
-                                        >
-                                            <span className="label-text">
-                                                Subject
-                                            </span>
-                                        </label>
-                                        <input
-                                            id="subject"
-                                            {...register("subject", {
-                                                required: "Subject is required",
-                                                minLength: {
-                                                    value: 3,
-                                                    message:
-                                                        "Subject must be at least 3 characters",
-                                                },
-                                            })}
-                                            type="text"
-                                            placeholder="What is this regarding?"
-                                            className={`input input-bordered ${
-                                                errors.subject
-                                                    ? "input-error"
-                                                    : ""
-                                            }`}
-                                        />
-                                        {errors.subject && (
-                                            <span className="label-text-alt text-error mt-1">
-                                                {errors.subject.message}
                                             </span>
                                         )}
                                     </div>

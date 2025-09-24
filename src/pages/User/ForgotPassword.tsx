@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FiMail } from "react-icons/fi";
+import { useDispatch } from "react-redux";
+
+import { forgotPassword } from "../../redux/slices/AuthSlice";
 
 interface ForgotPasswordForm {
     email: string;
@@ -8,7 +11,6 @@ interface ForgotPasswordForm {
 
 function ForgotPassword() {
     const [isLoading, setIsLoading] = useState(false);
-
     const {
         register,
         handleSubmit,
@@ -16,12 +18,12 @@ function ForgotPassword() {
     } = useForm<ForgotPasswordForm>({
         mode: "onSubmit",
     });
+    const dispatch: any = useDispatch();
 
-    const onSubmit = async (data: ForgotPasswordForm) => {
+    const onSubmit = async (data:any) => {
         try {
             setIsLoading(true);
-            await new Promise((resolve) => setTimeout(resolve, 1300));
-            console.log("Password reset requested for:", data.email);
+            await dispatch(forgotPassword(data));
             setIsLoading(false);
         } catch (err) {
             console.error("Failed to request password reset:", err);

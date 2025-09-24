@@ -2,9 +2,13 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import toast from "react-hot-toast";
 
 import changeAvatar from "../../apis/user/changeAvatar";
+import changePasswordApi from "../../apis/user/changePasswordApi";
+import contactUsApi from "../../apis/user/contactUsApi";
+import forgotPasswordApi from "../../apis/user/forgotPasswordApi";
 import getCurrentUser from "../../apis/user/getCurrentUser";
 import guestSignIn from "../../apis/user/guestSignIn";
 import logoutUser from "../../apis/user/logoutUser";
+import resetPasswordApi from "../../apis/user/resetPasswordApi";
 import signIn from "../../apis/user/signIn";
 import signUp from "../../apis/user/signUp";
 import updateUser from "../../apis/user/updateUser";
@@ -121,16 +125,13 @@ export const logout = createAsyncThunk("auth/logout", async (_, thunkAPI) => {
     }
 });
 
-export const getProfile = createAsyncThunk(
-    "auth/getProfile",
-    async () => {
-        try {
-            return await getCurrentUser();
-        } catch (error) {
-            console.log(error);
-        }
+export const getProfile = createAsyncThunk("auth/getProfile", async () => {
+    try {
+        return await getCurrentUser();
+    } catch (error) {
+        console.log(error);
     }
-);
+});
 
 export const updateProfile = createAsyncThunk(
     "auth/updateProfile",
@@ -145,6 +146,50 @@ export const updateProfile = createAsyncThunk(
                 await changeAvatar(avatar);
             }
             return await updateUser(data.fullName, data.email);
+        } catch (error) {
+            return thunkAPI.rejectWithValue(handleError(error));
+        }
+    }
+);
+
+export const changePassword = createAsyncThunk(
+    "auth/changePassword",
+    async (data, thunkAPI) => {
+        try {
+            return await changePasswordApi(data);
+        } catch (error) {
+            return thunkAPI.rejectWithValue(handleError(error));
+        }
+    }
+);
+
+export const forgotPassword = createAsyncThunk(
+    "auth/forgetPassword",
+    async (data, thunkAPI) => {
+        try {
+            return await forgotPasswordApi(data);
+        } catch (error) {
+            return thunkAPI.rejectWithValue(handleError(error));
+        }
+    }
+);
+
+export const resetPassword = createAsyncThunk(
+    "auth/resetPassword",
+    async (data, thunkAPI) => {
+        try {
+            return await resetPasswordApi(data);
+        } catch (error) {
+            return thunkAPI.rejectWithValue(handleError(error));
+        }
+    }
+);
+
+export const contactUs = createAsyncThunk(
+    "auth/contactUs",
+    async (data, thunkAPI) => {
+        try {
+            return await contactUsApi(data);
         } catch (error) {
             return thunkAPI.rejectWithValue(handleError(error));
         }

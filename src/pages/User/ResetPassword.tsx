@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-    FiEye,
-    FiEyeOff,
-    FiLock,
-} from "react-icons/fi";
+import { FiEye, FiEyeOff, FiLock } from "react-icons/fi";
+import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+
+import { resetPassword } from "../../redux/slices/AuthSlice";
 
 interface ResetPasswordForm {
     newPassword: string;
@@ -15,16 +14,13 @@ interface ResetPasswordForm {
 function ResetPassword() {
     const { token } = useParams();
     const navigate = useNavigate();
-
     const [showPasswords, setShowPasswords] = useState({
         new: false,
         confirm: false,
     });
     const [isLoading, setIsLoading] = useState(false);
-
     const passwordPattern =
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]+$/;
-
     const {
         register,
         handleSubmit,
@@ -33,22 +29,27 @@ function ResetPassword() {
     } = useForm<ResetPasswordForm>({
         mode: "onSubmit",
     });
-
+    const dispatch: any = useDispatch();
     const newPassword = watch("newPassword");
 
     const togglePasswordVisibility = (field: keyof typeof showPasswords) => {
         setShowPasswords((prev) => ({ ...prev, [field]: !prev[field] }));
     };
 
-    const onSubmit = async (data: ResetPasswordForm) => {
+    const onSubmit = async (data: any) => {
         try {
             setIsLoading(true);
-            await new Promise((resolve) => setTimeout(resolve, 1400));
-            console.log("Reset password request", { token, ...data });
+            const res = await dispatch(
+                resetPassword({
+                    ...data,
+                    resetToken: token,
+                    password: data.newPassword,
+                })
+            );
             setIsLoading(false);
-            setTimeout(() => {
+            if (res.payload.success) {
                 navigate("/signin");
-            }, 1400);
+            }
         } catch (err) {
             console.error("Failed to reset password:", err);
             setIsLoading(false);
