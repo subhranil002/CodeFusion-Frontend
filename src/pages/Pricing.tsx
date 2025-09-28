@@ -1,4 +1,10 @@
-import { FaCheck, FaCrown, FaRocket, FaStar } from "react-icons/fa";
+import {
+    FaCheck,
+    FaCrown,
+    FaRocket,
+    FaRupeeSign,
+    FaStar,
+} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 import HomeLayout from "../layouts/HomeLayout";
@@ -9,9 +15,10 @@ function Pricing() {
     const plans = [
         {
             name: "Free",
-            price: "$0",
-            period: "Forever",
-            description: "Great for starters and small projects",
+            price: "0",
+            period: "Per month",
+            description:
+                "Perfect to try things out and for small personal projects",
             features: [
                 "Up to 5 collaborative rooms",
                 "Basic editor tools",
@@ -26,38 +33,38 @@ function Pricing() {
             icon: <FaStar className="text-yellow-500" />,
         },
         {
-            name: "Pro Monthly",
-            price: "$9",
+            name: "Basic",
+            price: "499",
             period: "Per month",
-            description: "For developers and students needing more power",
+            description: "Affordable plan for active learners and small teams",
             features: [
                 "Unlimited collaborative rooms",
                 "Advanced editor tools",
                 "50 code runs per day",
                 "25 AI interactions per day",
                 "Higher compilation priority",
-                "Priority support",
+                "Email support with faster response",
             ],
-            button: "Subscribe Monthly",
-            buttonAction: "/pro-monthly",
+            button: "Choose Basic",
+            buttonAction: "/subscribe-basic",
             popular: true,
             icon: <FaRocket className="text-primary" />,
         },
         {
-            name: "Pro Yearly",
-            price: "$99",
-            period: "Per year",
-            description: "Best value for teams and professionals",
+            name: "Pro",
+            price: "999",
+            period: "Per month",
+            description: "Full power for professionals and big teams",
             features: [
-                "All Pro Monthly features",
+                "Unlimited collaborative rooms",
+                "All advanced editor tools",
                 "Unlimited code runs",
                 "Unlimited AI interactions",
                 "Highest compilation priority",
-                "24/7 priority support",
-                "Early access to new features",
+                "24/7 priority support & early access to features",
             ],
-            button: "Subscribe Yearly",
-            buttonAction: "/pro-yearly",
+            button: "Go Pro",
+            buttonAction: "/subscribe-pro",
             popular: false,
             icon: <FaCrown className="text-purple-500" />,
         },
@@ -69,20 +76,12 @@ function Pricing() {
             answer: "Yes, you can upgrade or downgrade your plan whenever you like. Upgrades take effect immediately, while downgrades apply at the end of your billing cycle.",
         },
         {
-            question: "Do you offer team discounts?",
-            answer: "Yes, special pricing is available for teams of 5 or more developers. Contact our sales team at sales@codefusion.com for details.",
-        },
-        {
-            question: "Is there a free trial for paid plans?",
-            answer: "Yes, we provide a 14-day free trial for both Pro Monthly and Pro Yearly plans. No credit card required to get started.",
-        },
-        {
             question: "What payment methods are supported?",
             answer: "We accept all payment methods. For enterprise customers, we also support invoicing.",
         },
         {
-            question: "Can I cancel my subscription?",
-            answer: "Yes, you can cancel anytime from your account profile. Once canceled, your access to Pro features will end immediately, and you’ll be reverted to the Free plan.",
+            question: "Do you offer refunds?",
+            answer: "We offer refunds on a case-by-case basis. If you believe you’re eligible, contact support within 14 days of purchase and we’ll review your request promptly.",
         },
         {
             question: "Do I keep my projects if I downgrade to Free?",
@@ -90,7 +89,21 @@ function Pricing() {
         },
         {
             question: "Is support included in all plans?",
-            answer: "Community support is included in the Free plan. Paid plans include priority support, with Pro Yearly offering 24/7 support.",
+            answer: "Community support is included in the Free plan. Paid plans include priority support, with Pro offering 24/7 support.",
+        },
+        {
+            question:
+                "Are there discounts for students, educators, or non-profits?",
+            answer: "We offer special pricing for eligible students, educators, and non-profits. Apply via our verification form or contact sales for details.",
+        },
+        {
+            question: "Do you offer custom or enterprise plans?",
+            answer: "Yes - for larger teams or custom requirements we offer enterprise plans with dedicated support, SSO, custom billing, and SLAs. Contact sales@codefusion.com to discuss options.",
+        },
+        {
+            question:
+                "What security and privacy measures do you have in place?",
+            answer: "We use industry-standard encryption for data in transit and at rest, role-based access controls, and regular backups. For privacy details, see our Privacy Policy and security documentation.",
         },
     ];
 
@@ -143,6 +156,7 @@ function Pricing() {
                                 {/* Price */}
                                 <div className="mb-4">
                                     <span className="text-4xl font-bold">
+                                        <FaRupeeSign className="inline w-4 h-4" />
                                         {plan.price}
                                     </span>
                                     <span className="text-base-content/70">

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
     FiEye,
@@ -9,7 +9,7 @@ import {
     FiUser,
 } from "react-icons/fi";
 import { LuLogIn } from "react-icons/lu";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { register } from "../redux/slices/AuthSlice";
@@ -35,6 +35,7 @@ function SignUp() {
     const selectedFile = watch("file")?.[0];
     const location = useLocation();
     const from = location.state?.from || "/";
+    const {isLoggedIn} = useSelector((state: any) => state.auth);
 
     const onSubmit = async (data: FormData) => {
         setIsSubmitting(true);
@@ -44,6 +45,12 @@ function SignUp() {
         }
         setIsSubmitting(false);
     };
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            navigate(from, { replace: true });
+        }
+    }, [isLoggedIn]);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-base-200 via-base-100 to-primary/20 flex items-center justify-center p-4 sm:p-15">

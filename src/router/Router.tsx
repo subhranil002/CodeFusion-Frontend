@@ -9,6 +9,8 @@ import Dashboard from "../pages/Code/Dashboard";
 import ContactUs from "../pages/Contact";
 import Home from "../pages/Home";
 import NotFound from "../pages/NotFound";
+import SubscribeBasic from "../pages/Payment/SubscribeBasic";
+import SubscribePro from "../pages/Payment/SubscribePro";
 import Pricing from "../pages/Pricing";
 import SignIn from "../pages/SignIn";
 import SignUp from "../pages/SignUp";
@@ -46,6 +48,8 @@ function Router() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/about" element={<About />} />
             <Route path="/pricing" element={<Pricing />} />
+            <Route path="/subscribe-basic" element={<SubscribeBasic />} />
+            <Route path="/subscribe-pro" element={<SubscribePro />} />
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/forgotpassword" element={<ForgotPassword />} />
             <Route path="/resetpassword/:token" element={<ResetPassword />} />
