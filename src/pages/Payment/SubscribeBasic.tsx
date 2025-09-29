@@ -1,6 +1,14 @@
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { FaCheck, FaRocket, FaRupeeSign } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
+import buyBasicApi from "../../apis/payment/buyBasicApi";
+import getKeyApi from "../../apis/payment/getKeyApi";
+import verifySubscriptionApi from "../../apis/payment/verifySubscriptionApi";
 import HomeLayout from "../../layouts/HomeLayout";
+import { getProfile } from "../../redux/slices/AuthSlice";
 
 function SubscribeBasic() {
     const features = [
@@ -22,15 +30,72 @@ function SubscribeBasic() {
             description: "Faster email response times",
         },
     ];
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const { data: userData } = useSelector((state: any) => state.auth);
+    const dispatch: any = useDispatch();
+    const navigate = useNavigate();
 
-    const handleSubscribe = () => {
-        // Simulate subscription process
-        console.log("Subscribing to Basic plan...");
-        // In real app, this would integrate with payment gateway
-        setTimeout(() => {
-            alert("Subscribed to Basic plan!");
-        }, 1500);
-    };
+    async function buySubscription() {
+        if (isSubmitting) return;
+
+        setIsSubmitting(true);
+        toast.loading("Wait! Redirecting to the payment page...");
+
+        const apiKey = (await getKeyApi())?.data?.key;
+        const subscription_id = (await buyBasicApi())?.data?.id;
+
+        if (!apiKey || !subscription_id) {
+            toast.dismiss();
+            toast.error("Something went wrong");
+            setIsSubmitting(false);
+            return;
+        }
+
+        const options = {
+            key: apiKey,
+            subscription_id,
+            name: "CodeFusion Pvt. Ltd.",
+            description:
+                "Affordable plan with extra runs, more AI interactions, and faster compilation priority.",
+            theme: {
+                color: "#2196F3",
+            },
+            image: "https://nyibmtuweldv80cj.public.blob.vercel-storage.com/logo.jpeg",
+            prefill: {
+                name: userData.fullName,
+                email: userData.email,
+                contact: "+91",
+            },
+            handler: async function (data: any) {
+                const res: any = await verifySubscriptionApi(
+                    data.razorpay_payment_id,
+                    data.razorpay_signature,
+                    499,
+                    "basic"
+                );
+                if (res?.success) {
+                    await dispatch(getProfile());
+                    navigate("/profile");
+                }
+            },
+        };
+
+        const paymentObject = new (window as any).Razorpay(options);
+        toast.dismiss();
+        paymentObject.open();
+        setIsSubmitting(false);
+    }
+
+    useEffect(() => {
+        if (
+            userData?.subscription?.status === "active" &&
+            (userData?.subscription?.plan === "basic" ||
+                userData?.subscription?.plan === "pro")
+        ) {
+            toast.error("Already subscribed to Basic plan");
+            navigate("/pricing");
+        }
+    }, []);
 
     return (
         <HomeLayout>
@@ -108,7 +173,7 @@ function SubscribeBasic() {
 
                                 {/* Subscribe Button */}
                                 <button
-                                    onClick={handleSubscribe}
+                                    onClick={buySubscription}
                                     className="btn btn-primary sm:btn-lg w-full gap-2 hover:scale-105 transition-transform"
                                 >
                                     <FaRocket className="min-w-5 min-h-5" />

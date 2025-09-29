@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import {
     FaCheck,
     FaCrown,
@@ -7,13 +9,16 @@ import {
     FaStar,
 } from "react-icons/fa";
 import { FiZap } from "react-icons/fi";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
+import buyProApi from "../../apis/payment/buyProApi";
+import getKeyApi from "../../apis/payment/getKeyApi";
+import verifySubscriptionApi from "../../apis/payment/verifySubscriptionApi";
 import HomeLayout from "../../layouts/HomeLayout";
+import { getProfile } from "../../redux/slices/AuthSlice";
 
 function SubscribePro() {
-    const navigate = useNavigate();
-
     const proFeatures = [
         {
             icon: <FaInfinity className="w-6 h-6" />,
@@ -36,7 +41,6 @@ function SubscribePro() {
             description: "Be the first to try new features and tools",
         },
     ];
-
     const enterpriseFeatures = [
         "Custom SLAs & uptime guarantees",
         "SSO & advanced security features",
@@ -45,19 +49,75 @@ function SubscribePro() {
         "On-premise deployment options",
         "Training and onboarding support",
     ];
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const { data: userData } = useSelector((state: any) => state.auth);
+    const dispatch: any = useDispatch();
+    const navigate = useNavigate();
 
-    const handleSubscribe = () => {
-        // Simulate subscription process
-        console.log("Subscribing to Pro plan...");
-        // In real app, this would integrate with payment gateway
-        setTimeout(() => {
-            alert("Subscribed to Pro plan!");
-        }, 1500);
-    };
+    async function buySubscription() {
+        if (isSubmitting) return;
+
+        setIsSubmitting(true);
+        toast.loading("Wait! Redirecting to the payment page...");
+
+        const apiKey = (await getKeyApi())?.data?.key;
+        const subscription_id = (await buyProApi())?.data?.id;
+
+        if (!apiKey || !subscription_id) {
+            toast.dismiss();
+            toast.error("Something went wrong");
+            setIsSubmitting(false);
+            return;
+        }
+
+        const options = {
+            key: apiKey,
+            subscription_id,
+            name: "CodeFusion Pvt. Ltd.",
+            description:
+                "Full access with unlimited runs, unlimited AI, highest priority, and 24/7 support.",
+            theme: {
+                color: "#7c0e99",
+            },
+            image: "https://nyibmtuweldv80cj.public.blob.vercel-storage.com/logo.jpeg",
+            prefill: {
+                name: userData.fullName,
+                email: userData.email,
+                contact: "+91",
+            },
+            handler: async function (data: any) {
+                const res: any = await verifySubscriptionApi(
+                    data.razorpay_payment_id,
+                    data.razorpay_signature,
+                    999,
+                    "pro"
+                );
+                if (res?.success) {
+                    await dispatch(getProfile());
+                    navigate("/profile");
+                }
+            },
+        };
+
+        const paymentObject = new (window as any).Razorpay(options);
+        toast.dismiss();
+        paymentObject.open();
+        setIsSubmitting(false);
+    }
+
+    useEffect(() => {
+        if (
+            userData?.subscription?.status === "active" &&
+            userData?.subscription?.plan === "pro"
+        ) {
+            toast.error("Already subscribed to Pro plan");
+            navigate("/pricing");
+        }
+    }, []);
 
     return (
         <HomeLayout>
-            <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 dark:from-gray-900 dark:to-purple-900 py-12">
+            <div className="min-h-screen bg-gradient-to-br from-gray-900 to-purple-900 py-12">
                 <div className="container mx-auto px-4 max-w-6xl">
                     {/* Header Section */}
                     <div className="text-center mb-12">
@@ -128,7 +188,7 @@ function SubscribePro() {
                                     </div>
 
                                     <button
-                                        onClick={handleSubscribe}
+                                        onClick={buySubscription}
                                         className="btn btn-warning sm:btn-lg w-full hover:scale-105 transition-transform gap-2"
                                     >
                                         <FaCrown className="min-w-5 min-h-5" />
@@ -330,7 +390,7 @@ function SubscribePro() {
                                 important projects.
                             </p>
                             <button
-                                onClick={handleSubscribe}
+                                onClick={buySubscription}
                                 className="btn btn-accent sm:btn-lg gap-2"
                             >
                                 <FaCrown className="min-w-5 min-h-5" />
