@@ -28,6 +28,7 @@ function Profile() {
     }
 
     function modifyCloudinaryURL(url: string) {
+        if (url === "" || url === null) return "";
         if (import.meta.env.VITE_IMAGE_TRANSFORMATION === "true") {
             return url.replace(
                 "/upload/",
@@ -163,7 +164,7 @@ function Profile() {
                                                     <img
                                                         src={modifyCloudinaryURL(
                                                             userData?.avatar
-                                                                ?.secure_url
+                                                                ?.secure_url || ""
                                                         )}
                                                         className="object-cover"
                                                         alt="User Avatar"

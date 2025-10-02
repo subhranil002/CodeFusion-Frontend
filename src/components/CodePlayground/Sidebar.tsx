@@ -84,6 +84,7 @@ function Sidebar({ children }: any) {
     }, []);
 
     function modifyCloudinaryURL(url: string) {
+        if (url === "" || url === null) return "";
         if (import.meta.env.VITE_IMAGE_TRANSFORMATION === "true") {
             return url.replace(
                 "/upload/",
@@ -262,7 +263,7 @@ function Sidebar({ children }: any) {
                                                         <div className="w-10 rounded-full ring ring-offset-2 ring-primary/20 overflow-hidden">
                                                             <img
                                                                 src={modifyCloudinaryURL(
-                                                                    user.avatar
+                                                                    user.avatar || ""
                                                                 )}
                                                                 alt={`${user.name} avatar`}
                                                             />

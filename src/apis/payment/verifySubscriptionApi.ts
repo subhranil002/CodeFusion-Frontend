@@ -4,12 +4,14 @@ import axiosInstance from "../../configs/AxiosConfig";
 
 export default async function verifySubscriptionApi(
     razorpay_payment_id: string,
+    razorpay_subscription_id: string,
     razorpay_signature: number,
     amount: number,
     plan: string
 ) {
     const res = axiosInstance.post("/payments/verify", {
         razorpay_payment_id,
+        razorpay_subscription_id,
         razorpay_signature,
         amount,
         plan,

@@ -69,6 +69,7 @@ function SubscribeBasic() {
             handler: async function (data: any) {
                 const res: any = await verifySubscriptionApi(
                     data.razorpay_payment_id,
+                    data.razorpay_subscription_id,
                     data.razorpay_signature,
                     499,
                     "basic"

@@ -33,6 +33,7 @@ function Header() {
     }
 
     function modifyCloudinaryURL(url: string) {
+        if (url === "" || url === null) return "";
         if (import.meta.env.VITE_IMAGE_TRANSFORMATION === "true") {
             return url.replace(
                 "/upload/",
@@ -209,7 +210,7 @@ function Header() {
                             <img
                                 alt="Profile Avatar"
                                 src={modifyCloudinaryURL(
-                                    data?.avatar?.secure_url
+                                    data?.avatar?.secure_url || ""
                                 )}
                             />
                         ) : (
@@ -262,21 +263,35 @@ function Header() {
                                 </Link>
                             </li>
                             {isLoggedIn &&
-                                (role === "CODER" || role === "GUEST") && (
-                                    <li>
-                                        <Link
-                                            to="/purchasehistory"
-                                            className={`flex items-center gap-2 rounded-md ${
-                                                isActive("/purchasehistory")
-                                                    ? "bg-neutral text-neutral-content"
-                                                    : ""
-                                            }`}
-                                        >
-                                            <FaReceipt className="text-lg" />
-                                            My Purchases
-                                        </Link>
-                                    </li>
-                                )}
+                            (role === "CODER" || role === "GUEST") ? (
+                                <li>
+                                    <Link
+                                        to="/purchasehistory"
+                                        className={`flex items-center gap-2 rounded-md ${
+                                            isActive("/purchasehistory")
+                                                ? "bg-neutral text-neutral-content"
+                                                : ""
+                                        }`}
+                                    >
+                                        <FaReceipt className="text-lg" />
+                                        My Purchases
+                                    </Link>
+                                </li>
+                            ) : (
+                                <li>
+                                    <Link
+                                        to="/allpayments"
+                                        className={`flex items-center gap-2 rounded-md ${
+                                            isActive("/allpayments")
+                                                ? "bg-neutral text-neutral-content"
+                                                : ""
+                                        }`}
+                                    >
+                                        <FaReceipt className="text-lg" />
+                                        All Payments
+                                    </Link>
+                                </li>
+                            )}
                             <li>
                                 <button
                                     onClick={() => handleLogout()}
